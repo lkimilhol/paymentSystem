@@ -35,3 +35,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+### embedded db file ###
+/test.mv.db
+/test.trace.db
