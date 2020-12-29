@@ -11,10 +11,10 @@ public class Card {
     long cardId;
 
     @Column(name = "EXPIRY_DATE", nullable = false)
-    int expiryDate;
+    String expiryDate;
 
     @Column(name = "CSV", nullable = false)
-    int csv;
+    String csv;
 
     public long getCardId() {
         return cardId;
@@ -24,19 +24,19 @@ public class Card {
         this.cardId = cardId;
     }
 
-    public int getExpiryDate() {
+    public String getExpiryDate() {
         return expiryDate;
     }
 
-    public void setExpiryDate(int expiryDate) {
+    public void setExpiryDate(String expiryDate) {
         this.expiryDate = expiryDate;
     }
 
-    public int getCsv() {
+    public String getCsv() {
         return csv;
     }
 
-    public void setCsv(int csv) {
+    public void setCsv(String csv) {
         this.csv = csv;
     }
 }
