@@ -1,26 +1,28 @@
 package com.lkimilhol.paymentSystem.repository;
 
 import com.lkimilhol.paymentSystem.domain.Card;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public class CardRepository {
-    private final EntityManager em;
+public
+interface CardRepository extends JpaRepository<Card, Long> {
+    @Override
+    <S extends Card> S save(S entity);
 
-    public CardRepository(EntityManager em) {
-        this.em = em;
-    }
+    @Override
+    List<Card> findAll();
 
-    public Card save(Card card) {
-        em.persist(card);
-        return card;
-    }
-
-    public List<Card> findAll() {
-        return em.createQuery("select c from Card c ", Card.class)
-                .getResultList();
-    }
+    @Override
+    void deleteAll();
 }

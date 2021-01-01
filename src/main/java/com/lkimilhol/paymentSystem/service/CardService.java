@@ -6,11 +6,12 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class CardService {
-    private final CardRepository cardRepository;
+    private CardRepository cardRepository;
 
     public CardService(CardRepository cardRepository) {
         this.cardRepository = cardRepository;
@@ -18,7 +19,11 @@ public class CardService {
 
     public Long add(Card card) {
         cardRepository.save(card);
-        return card.getCardId();
+        return card.getId();
+    }
+
+    public Optional<Card> findById(long id) {
+        return cardRepository.findById(id);
     }
 
     public List<Card> findCardList() {
