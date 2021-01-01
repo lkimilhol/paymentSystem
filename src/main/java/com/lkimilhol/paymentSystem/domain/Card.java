@@ -8,7 +8,7 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "CARD_ID")
-    long cardId;
+    long id;
 
     @Column(name = "EXPIRY_DATE", nullable = false)
     String expiryDate;
@@ -16,12 +16,12 @@ public class Card {
     @Column(name = "CSV", nullable = false)
     String csv;
 
-    public long getCardId() {
-        return cardId;
+    public long getId() {
+        return id;
     }
 
-    public void setCardId(long cardId) {
-        this.cardId = cardId;
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getExpiryDate() {
