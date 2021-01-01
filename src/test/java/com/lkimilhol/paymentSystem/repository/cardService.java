@@ -5,25 +5,25 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.event.annotation.BeforeTestClass;
 
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@DataJpaTest
+@SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional
 @Rollback
 public class cardService {
 
     @Autowired
-    private EntityManager em;
-
+    private CardRepository cardRepository;
 
     @Test
     public void 카드_생성() {
-        CardRepository cardRepository = new CardRepository(em);
         Card card = new Card();
         card.setExpiryDate("0912");
         card.setCsv("198");
