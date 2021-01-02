@@ -1,32 +1,33 @@
 package com.lkimilhol.paymentSystem.service;
 
 import com.lkimilhol.paymentSystem.domain.Card;
-import com.lkimilhol.paymentSystem.repository.CardRepository;
+import com.lkimilhol.paymentSystem.domain.CardPayment;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class CardService {
-    private CardRepository cardRepository;
 
-    public CardService(CardRepository cardRepository) {
-        this.cardRepository = cardRepository;
+    public String pay(Card card) {
+        System.out.println(card.toString());
+        return "";
     }
 
-    public Long add(Card card) {
-        cardRepository.save(card);
-        return card.getId();
+    private int calculateVat(int amount, int vat) {
+        double doubleVat = 0d;
+        vat = vat == 0 ? 11 : vat;
+
+        amount = Math.round((float) amount / vat);
+        return amount;
     }
 
-    public Optional<Card> findById(long id) {
-        return cardRepository.findById(id);
-    }
+//    public Optional<CardPayment> findById(long id) {
+//        return cardRepository.findById(id);
+//    }
 
-    public List<Card> findCardList() {
-        return cardRepository.findAll();
-    }
+//    public List<CardPayment> findCardList() {
+//        return cardRepository.findAll();
+//    }
 }
