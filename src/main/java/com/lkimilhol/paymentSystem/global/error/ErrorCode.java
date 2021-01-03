@@ -5,11 +5,11 @@ public enum ErrorCode {
     NOT_EXISTS_REQUIRED_KEY(400, "-99", "Required key not found in request"),
     INVALID_VALUE(400, "-98", "Request's Value is Invalid"),
 
-    // Card
-    INVALID_CARD_DATA_LEN(400, "201", "Card data length is invalid"),
+    // Payment
+    INVALID_CARD_DATA_LEN(400, "P001", "Card data length is invalid"),
 
-    // Coupon
-    COUPON_ALREADY_USE(400, "CO001", "Coupon was already used"),
+    // SendData
+    NOT_FOUND_UNIQUE_ID(400, "C001", "not found unique id"),
     ;
 
     private final String code;

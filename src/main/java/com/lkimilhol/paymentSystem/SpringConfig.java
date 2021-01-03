@@ -2,6 +2,8 @@ package com.lkimilhol.paymentSystem;
 
 import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
 import com.lkimilhol.paymentSystem.repository.CardSendDataRepository;
+import com.lkimilhol.paymentSystem.service.CardPaymentService;
+import com.lkimilhol.paymentSystem.service.CardSendDataService;
 import com.lkimilhol.paymentSystem.service.CardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +24,18 @@ public class SpringConfig {
 
     @Bean
     public CardService cardService () {
-        return new CardService(cardPaymentRepository(), cardSendDataRepository());
+        return new CardService();
+    }
+
+    @Bean
+    public CardPaymentService cardPaymentService () {
+        return new CardPaymentService(cardPaymentRepository());
+    }
+
+
+    @Bean
+    public CardSendDataService cardSendDataService () {
+        return new CardSendDataService(cardSendDataRepository());
     }
 
     @Bean

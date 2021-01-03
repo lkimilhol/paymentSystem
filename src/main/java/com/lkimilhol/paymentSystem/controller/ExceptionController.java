@@ -20,5 +20,8 @@ public class ExceptionController {
     }
 
     @ExceptionHandler(value = Exception.class)
-    public String handleException(Exception e){return e.getMessage();}
+    public String handleException(Exception e){
+        System.out.println(e.getMessage());
+        return e.getMessage();
+    }
 }

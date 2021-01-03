@@ -12,25 +12,28 @@ public class CardPayment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "UNIQUE_ID")
-    long uniqueId;
+    private long uniqueId;
 
     @Column(name = "CARD_NUMBER")
-    long cardNumber;
+    private long cardNumber;
 
     @Column(name = "EXPIRY_DATE")
-    int expiryDate;
+    private int expiryDate;
 
-    @Column(name = "CSV")
-    int csv;
+    @Column(name = "CVC")
+    private int cvc;
 
     @Column(name = "INSTALLMENT")
-    int installment;
+    private int installment;
 
     @Column(name = "AMOUNT")
-    int amount;
+    private int amount;
 
     @Column(name = "VAT")
-    int vat;
+    private int vat;
+
+    @Column(name = "PAYMENT_STATUS", columnDefinition="tinyint(1) default 1")
+    private boolean paymentStatus;
 
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
