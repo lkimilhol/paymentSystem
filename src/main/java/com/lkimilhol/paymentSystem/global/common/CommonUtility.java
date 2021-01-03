@@ -1,6 +1,6 @@
-package com.lkimilhol.paymentSystem.global;
+package com.lkimilhol.paymentSystem.global.common;
 
-public class Utility {
+public class CommonUtility {
     public String AppendStringSpace(String s, int numberOfSpace) {
         numberOfSpace = numberOfSpace - s.length();
         return String.format(s + "%" + numberOfSpace +"s", " ");

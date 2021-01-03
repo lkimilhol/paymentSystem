@@ -18,4 +18,7 @@ public class ExceptionController {
         res.setErrorCode(e.getErrorCode());
         return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(value = Exception.class)
+    public String handleException(Exception e){return e.getMessage();}
 }

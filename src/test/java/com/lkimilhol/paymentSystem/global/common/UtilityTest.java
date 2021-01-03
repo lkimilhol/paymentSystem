@@ -1,5 +1,6 @@
-package com.lkimilhol.paymentSystem.global;
+package com.lkimilhol.paymentSystem.global.common;
 
+import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,10 +11,10 @@ public class UtilityTest {
     public void AppendSpace() {
         //given
         String s = "1234567890";
-        Utility utility = new Utility();
+        CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = utility.AppendStringSpace(s, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendStringSpace(s, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -25,10 +26,10 @@ public class UtilityTest {
     public void AppendIntegerSpace() {
         //given
         int i = 1234567890;
-        Utility utility = new Utility();
+        CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = utility.AppendIntegerSpace(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendIntegerSpace(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -40,10 +41,10 @@ public class UtilityTest {
     public void AppendIntegerZero() {
         //given
         int i = 1234567890;
-        Utility utility = new Utility();
+        CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = utility.AppendIntegerZero(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendIntegerZero(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -55,10 +56,10 @@ public class UtilityTest {
     public void AppendIntegerSpaceRight() {
         //given
         int i = 1234567890;
-        Utility utility = new Utility();
+        CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = utility.AppendIntegerSpaceRight(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendIntegerSpaceRight(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
