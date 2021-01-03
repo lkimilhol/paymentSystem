@@ -6,15 +6,31 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@Table(name = "CARD_DATA")
+@Entity
+@Table(name = "CARD_PAYMENT")
 public class CardPayment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "UNIQUE_ID")
     long uniqueId;
 
-    @Column(name = "CARD_DATA", columnDefinition = "CHAR(" + com.lkimilhol.paymentSystem.global.CardPayment.CARD_DATA_LEN + ")" , nullable = false)
-    String cardData;
+    @Column(name = "CARD_NUMBER")
+    String cardNumber;
+
+    @Column(name = "EXPIRY_DATE")
+    String expiryDate;
+
+    @Column(name = "CSV")
+    String csv;
+
+    @Column(name = "INSTALLMENT")
+    int installment;
+
+    @Column(name = "AMOUNT")
+    int amount;
+
+    @Column(name = "VAT")
+    int vat;
 
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;

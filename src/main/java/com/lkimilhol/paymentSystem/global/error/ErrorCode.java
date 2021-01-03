@@ -2,7 +2,8 @@ package com.lkimilhol.paymentSystem.global.error;
 
 public enum ErrorCode {
     // Common
-    NOT_EXISTS_REQUIRED_KEY(400, "C001", "Required key not found in request"),
+    NOT_EXISTS_REQUIRED_KEY(400, "-99", "Required key not found in request"),
+    INVALID_VALUE(400, "-98", "Request's Value is Invalid"),
 
     // Member
     EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
