@@ -1,10 +1,9 @@
 package com.lkimilhol.paymentSystem.service;
 
 import com.lkimilhol.paymentSystem.domain.CardPayment;
-import com.lkimilhol.paymentSystem.domain.CardSendData;
+import com.lkimilhol.paymentSystem.global.Utility;
 import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
 import com.lkimilhol.paymentSystem.repository.CardSendDataRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -17,16 +16,21 @@ public class CardService {
     private CardPaymentRepository cardPaymentRepository;
     private CardSendDataRepository cardSendDataRepository;
 
+    Utility utility;
+
     public CardService(CardPaymentRepository cp, CardSendDataRepository cs) {
         this.cardPaymentRepository = cp;
         this.cardSendDataRepository = cs;
+        utility = new Utility();
     }
 
 
     public String pay(CardPayment cardPayment) {
         cardPayment.setInsertTime(LocalDateTime.now());
         cardPaymentRepository.save(cardPayment);
-//        long cardPaymentId = cardPayment.getUniqueId();
+        long cardPaymentId = cardPayment.getUniqueId();
+
+
 
         int vatAmount = calculateVat(cardPayment.getAmount(), cardPayment.getVat());
         cardPayment.setAmount(cardPayment.getAmount() + vatAmount);
