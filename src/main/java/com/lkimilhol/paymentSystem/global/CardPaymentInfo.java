@@ -21,4 +21,6 @@ public class CardPaymentInfo {
     public static final int COMMON_DATA_SEPARATION_LEN = 10;
     public static final int COMMON_DATA_UNIQUE_ID_LEN = 20;
 
+    public static final int GENERATE_UNIQUE_ID_ZERO_CNT = 10;
+
 }

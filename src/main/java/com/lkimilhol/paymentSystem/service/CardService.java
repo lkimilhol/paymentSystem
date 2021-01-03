@@ -9,6 +9,7 @@ import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
 import com.lkimilhol.paymentSystem.repository.CardSendDataRepository;
+import com.lkimilhol.paymentSystem.responseApi.CardPaymentResponse;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -32,7 +33,7 @@ public class CardService {
     }
 
 
-    public String pay(CardPayment cardPayment) {
+    public CardPaymentResponse pay(CardPayment cardPayment) {
         cardPayment.setInsertTime(LocalDateTime.now());
         cardPaymentRepository.save(cardPayment);
         long cardPaymentId = cardPayment.getUniqueId();
@@ -51,14 +52,21 @@ public class CardService {
             throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
         }
 
+        String uniqueId = commonUtility.generateUniqueId(cardPaymentId);
+
         CardSendData cardSendData = new CardSendData();
+
+        cardSendData.setUniqueId(uniqueId);
         cardSendData.setCardData(totalData);
         cardSendData.setSendTime(LocalDateTime.now());
 
         cardSendDataRepository.save(cardSendData);
 
+        CardPaymentResponse response = new CardPaymentResponse();
+        response.setCardData(cardSendData.getCardData());
+        response.setUniqueId(cardSendData.getUniqueId());
 
-        return "";
+        return response;
     }
 
     private int calculateVat(int amount, int vat) {
@@ -67,9 +75,9 @@ public class CardService {
     }
 
     private String makeCommonData(int dataLen, String separate, long uniqueId) {
-        String dataLenString = commonUtility.AppendNumericSpace(dataLen, CardPaymentInfo.COMMON_CARD_DATA_LEN);
-        String dataSeparate = commonUtility.AppendStringSpace(separate, CardPaymentInfo.COMMON_DATA_SEPARATION_LEN);
-        String dataUniqueId = commonUtility.AppendStringSpace(Long.toString(uniqueId), CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN);
+        String dataLenString = commonUtility.appendNumericSpace(dataLen, CardPaymentInfo.COMMON_CARD_DATA_LEN);
+        String dataSeparate = commonUtility.appendStringSpace(separate, CardPaymentInfo.COMMON_DATA_SEPARATION_LEN);
+        String dataUniqueId = commonUtility.appendStringSpace(Long.toString(uniqueId), CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN);
 
         return dataLenString
                 + dataSeparate
@@ -78,23 +86,23 @@ public class CardService {
 
 
     private String makeCardData(CardPayment cardPayment, String encryptedCardInfo) {
-        String cardNumber = commonUtility.AppendNumericNumberLeft(cardPayment.getCardNumber(),
+        String cardNumber = commonUtility.appendNumericNumberLeft(cardPayment.getCardNumber(),
                 CardPaymentInfo.CARD_NUMBER_LEN);
-        String installment = commonUtility.AppendNumericZero(cardPayment.getInstallment(),
+        String installment = commonUtility.appendNumericZero(cardPayment.getInstallment(),
                 CardPaymentInfo.CARD_INSTALLMENT_LEN);
-        String expiryDate = commonUtility.AppendNumericNumberLeft(cardPayment.getExpiryDate(),
+        String expiryDate = commonUtility.appendNumericNumberLeft(cardPayment.getExpiryDate(),
                 CardPaymentInfo.CARD_EXPIRY_DATE_LEN);
-        String csv = commonUtility.AppendNumericNumberLeft(cardPayment.getCsv(),
+        String csv = commonUtility.appendNumericNumberLeft(cardPayment.getCsv(),
                 CardPaymentInfo.CARD_CSV_LEN);
-        String amount = commonUtility.AppendNumericSpace(cardPayment.getAmount(),
+        String amount = commonUtility.appendNumericSpace(cardPayment.getAmount(),
                 CardPaymentInfo.CARD_AMOUNT_LEN);
-        String vat = commonUtility.AppendNumericZero(cardPayment.getVat(),
+        String vat = commonUtility.appendNumericZero(cardPayment.getVat(),
                 CardPaymentInfo.CARD_VAT_LEN);
-        String originalPayment = commonUtility.AppendStringSpace("",
+        String originalPayment = commonUtility.appendStringSpace("",
                 CardPaymentInfo.CARD_PAYMENT_ORIGINAL);
-        encryptedCardInfo = commonUtility.AppendStringSpace(encryptedCardInfo,
+        encryptedCardInfo = commonUtility.appendStringSpace(encryptedCardInfo,
                 CardPaymentInfo.CARD_ENCRYPTED_DATA_LEN);
-        String spareField = commonUtility.AppendStringSpace("",
+        String spareField = commonUtility.appendStringSpace("",
                 CardPaymentInfo.SPARE_FIELD);
 
         return cardNumber +

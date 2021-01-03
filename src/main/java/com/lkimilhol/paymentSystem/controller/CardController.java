@@ -2,7 +2,9 @@ package com.lkimilhol.paymentSystem.controller;
 
 
 import com.lkimilhol.paymentSystem.dto.CardPaymentDto;
+import com.lkimilhol.paymentSystem.responseApi.CardPaymentResponse;
 import com.lkimilhol.paymentSystem.service.CardService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,9 +21,9 @@ public class CardController {
 
     @RequestMapping(value = "/card/pay", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     @ResponseBody
-    public String pay(@RequestBody String body) {
+    public ResponseEntity<CardPaymentResponse> pay(@RequestBody String body) {
         CardPaymentDto dto = new CardPaymentDto();
-        cardService.pay(dto.transferCard(body));
-        return "";
+        CardPaymentResponse cardPaymentResponse = cardService.pay(dto.transferCard(body));
+        return ResponseEntity.ok(cardPaymentResponse);
     }
 }
