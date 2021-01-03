@@ -13,7 +13,7 @@ public class CardPayment {
     @Column(name = "UNIQUE_ID")
     long uniqueId;
 
-    @Column(name = "CARD_DATA", columnDefinition = "CHAR(" + com.lkimilhol.paymentSystem.api.CardPayment.CARD_DATA_LEN + ")" , nullable = false)
+    @Column(name = "CARD_DATA", columnDefinition = "CHAR(" + com.lkimilhol.paymentSystem.global.CardPayment.CARD_DATA_LEN + ")" , nullable = false)
     String cardData;
 
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")

@@ -1,18 +1,16 @@
 package com.lkimilhol.paymentSystem.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lkimilhol.paymentSystem.domain.Card;
-import com.lkimilhol.paymentSystem.domain.CardPayment;
+import com.lkimilhol.paymentSystem.global.error.CustomException;
+import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 import lombok.*;
 
-import javax.swing.text.Element;
 
 @Data
+
 public class CardDto implements DataTransferObjectService {
     private String[] requireKey = {"cardNumber", "expiryDate", "csv", "installment", "amount"};
 
@@ -22,7 +20,7 @@ public class CardDto implements DataTransferObjectService {
     public void keyCheck(JsonObject obj) {
         for (String s : this.requireKey) {
             if (!obj.has(s)) {
-                System.out.println("out!");
+                throw new CustomException(ErrorCode.NOT_EXISTS_REQUIRED_KEY);
             }
         }
     }
