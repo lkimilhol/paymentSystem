@@ -16,9 +16,9 @@ public class AES256UtilityTest {
         //given
         AES256Utility util = new AES256Utility();
         CardPayment cardPayment = new CardPayment();
-        String cardNumber = "1234567890";
+        long cardNumber = 1234567890;
         int installment = 0;
-        String csv = "098";
+        int csv = 938;
         cardPayment.setCardNumber(cardNumber);
         cardPayment.setInstallment(installment);
         cardPayment.setCsv(csv);

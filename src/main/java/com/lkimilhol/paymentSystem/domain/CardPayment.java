@@ -15,13 +15,13 @@ public class CardPayment {
     long uniqueId;
 
     @Column(name = "CARD_NUMBER")
-    String cardNumber;
+    long cardNumber;
 
     @Column(name = "EXPIRY_DATE")
-    String expiryDate;
+    int expiryDate;
 
     @Column(name = "CSV")
-    String csv;
+    int csv;
 
     @Column(name = "INSTALLMENT")
     int installment;

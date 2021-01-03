@@ -29,7 +29,7 @@ public class UtilityTest {
         CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = commonUtility.AppendIntegerSpace(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendNumericSpace(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -44,7 +44,7 @@ public class UtilityTest {
         CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = commonUtility.AppendIntegerZero(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendNumericZero(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -59,7 +59,7 @@ public class UtilityTest {
         CommonUtility commonUtility = new CommonUtility();
 
         //when
-        String result = commonUtility.AppendIntegerSpaceRight(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = commonUtility.AppendNumericNumberLeft(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());

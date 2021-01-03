@@ -15,7 +15,8 @@ public class CardSendData {
     @Column(name = "UNIQUE_ID")
     long uniqueId;
 
-    @Column(name = "CARD_DATA", columnDefinition = "CHAR(" + CardPaymentInfo.CARD_DATA_LEN + ")", nullable = false )
+    @Lob
+    @Column(name = "CARD_DATA", nullable = false, length = CardPaymentInfo.TOTAL_CARD_DATA_LEN)
     String cardData;
 
     @Column(name = "SEND_TIME", columnDefinition = "DATETIME")

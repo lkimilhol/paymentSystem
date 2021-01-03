@@ -5,8 +5,8 @@ public enum ErrorCode {
     NOT_EXISTS_REQUIRED_KEY(400, "-99", "Required key not found in request"),
     INVALID_VALUE(400, "-98", "Request's Value is Invalid"),
 
-    // Member
-    EMAIL_DUPLICATION(400, "M001", "Email is Duplication"),
+    // Card
+    INVALID_CARD_DATA_LEN(400, "201", "Card data length is invalid"),
 
     // Coupon
     COUPON_ALREADY_USE(400, "CO001", "Coupon was already used"),
