@@ -1,7 +1,9 @@
 package com.lkimilhol.paymentSystem;
 
+import com.lkimilhol.paymentSystem.repository.CardAdminRepository;
 import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
 import com.lkimilhol.paymentSystem.repository.CardSendDataRepository;
+import com.lkimilhol.paymentSystem.service.CardAdminService;
 import com.lkimilhol.paymentSystem.service.CardPaymentService;
 import com.lkimilhol.paymentSystem.service.CardSendDataService;
 import com.lkimilhol.paymentSystem.service.CardService;
@@ -32,11 +34,14 @@ public class SpringConfig {
         return new CardPaymentService(cardPaymentRepository());
     }
 
-
     @Bean
     public CardSendDataService cardSendDataService () {
         return new CardSendDataService(cardSendDataRepository());
     }
+
+    @Bean
+    public CardAdminService cardLogService() {
+        return new CardAdminService(cardLogRepository());}
 
     @Bean
     public CardPaymentRepository cardPaymentRepository() {
@@ -46,6 +51,11 @@ public class SpringConfig {
     @Bean
     public CardSendDataRepository cardSendDataRepository() {
         return new CardSendDataRepository(em);
+    }
+
+    @Bean
+    public CardAdminRepository cardLogRepository() {
+        return new CardAdminRepository(em);
     }
 
 }

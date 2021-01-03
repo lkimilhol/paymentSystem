@@ -13,16 +13,11 @@ public class CardSendDataService {
         this.cardSendDataRepository = cardSendDataRepository;
     }
 
-    public CardSendData save(String uniqueId, String data) {
+    public CardSendData save(String data) {
         CardSendData cardSendData = new CardSendData();
-        cardSendData.setUniqueId(uniqueId);
         cardSendData.setCardData(data);
         cardSendData.setSendTime(LocalDateTime.now());
         cardSendDataRepository.save(cardSendData);
         return cardSendData;
-    }
-
-    public Optional<CardSendData> findByUniqueId(String uniqueId) {
-        return cardSendDataRepository.findByUniqueId(uniqueId);
     }
 }

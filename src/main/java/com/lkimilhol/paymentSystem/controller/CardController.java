@@ -1,9 +1,13 @@
 package com.lkimilhol.paymentSystem.controller;
 
 
+import com.lkimilhol.paymentSystem.domain.CardAdmin;
+import com.lkimilhol.paymentSystem.domain.CardCancel;
 import com.lkimilhol.paymentSystem.domain.CardSendData;
+import com.lkimilhol.paymentSystem.dto.CardCancelDto;
 import com.lkimilhol.paymentSystem.dto.CardGetDto;
 import com.lkimilhol.paymentSystem.dto.CardPaymentDto;
+import com.lkimilhol.paymentSystem.responseApi.CardCancelResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardGetResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardPaymentResponse;
 import com.lkimilhol.paymentSystem.service.CardService;
@@ -26,7 +30,7 @@ public class CardController {
     @ResponseBody
     public ResponseEntity<CardPaymentResponse> pay(@RequestBody String body) {
         CardPaymentDto dto = new CardPaymentDto();
-        CardPaymentResponse cardPaymentResponse = cardService.pay(dto.transferCard(body));
+        CardPaymentResponse cardPaymentResponse = cardService.pay(dto.transferBody(body));
         return ResponseEntity.ok(cardPaymentResponse);
     }
 
@@ -34,8 +38,17 @@ public class CardController {
     @ResponseBody
     public ResponseEntity<CardGetResponse> get(@RequestBody String body) {
         CardGetDto dto = new CardGetDto();
-        CardSendData cardSendData = dto.transferBody(body);
-        CardGetResponse cardGetResponse = cardService.get(cardSendData.getUniqueId());
+        CardAdmin cardAdmin = dto.transferBody(body);
+        CardGetResponse cardGetResponse = cardService.get(cardAdmin.getUniqueId());
         return ResponseEntity.ok(cardGetResponse);
+    }
+
+    @RequestMapping(value = "/card/cancel", method = RequestMethod.POST, produces = "application/json; charset=utf8")
+    @ResponseBody
+    public ResponseEntity<CardCancelResponse> cancel(@RequestBody String body) {
+        CardCancelDto dto = new CardCancelDto();
+        CardCancel cardCancel = dto.transferBody(body);
+        CardCancelResponse cardCancelResponse = cardService.cancel(cardCancel);
+        return ResponseEntity.ok(cardCancelResponse);
     }
 }

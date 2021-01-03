@@ -1,5 +1,6 @@
 package com.lkimilhol.paymentSystem.domain;
 
+import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -11,8 +12,11 @@ import java.time.LocalDateTime;
 public class CardPayment {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "UNIQUE_ID")
-    private long uniqueId;
+    @Column(name = "SEQ")
+    private long seq;
+
+    @Column(name = "UNIQUE_ID", nullable = false, length = CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN, unique = true)
+    String uniqueId;
 
     @Column(name = "CARD_NUMBER")
     private long cardNumber;

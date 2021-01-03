@@ -20,12 +20,4 @@ public class CardSendDataRepository {
         em.persist(cardSendData);
         return cardSendData;
     }
-
-    public Optional<CardSendData> findByUniqueId(String uniqueId) {
-        List<CardSendData> result = em.createQuery("select t from CardSendData t where t.uniqueId = :uniqueId", CardSendData.class)
-                .setParameter("uniqueId", uniqueId)
-                .getResultList();
-
-        return result.stream().findAny();
-    }
 }

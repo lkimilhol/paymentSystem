@@ -6,7 +6,8 @@ public enum ErrorCode {
     INVALID_VALUE(400, "-98", "Request's Value is Invalid"),
 
     // Payment
-    INVALID_CARD_DATA_LEN(400, "P001", "Card data length is invalid"),
+    INVALID_HEADER_DATA_LEN(400, "P001", "common header length is invalid"),
+    INVALID_CARD_DATA_LEN(400, "P002", "Card data length is invalid"),
 
     // SendData
     NOT_FOUND_UNIQUE_ID(400, "C001", "not found unique id"),

@@ -27,7 +27,7 @@ public class CardPaymentDto implements DataTransferObjectService {
         }
     }
 
-    public CardPayment transferCard(String body) {
+    public CardPayment transferBody(String body) {
         Gson gson = new Gson();
         JsonParser p = new JsonParser();
         JsonObject obj = (JsonObject) p.parse(body);

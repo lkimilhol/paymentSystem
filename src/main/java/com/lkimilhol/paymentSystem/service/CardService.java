@@ -1,5 +1,7 @@
 package com.lkimilhol.paymentSystem.service;
 
+import com.lkimilhol.paymentSystem.domain.CardAdmin;
+import com.lkimilhol.paymentSystem.domain.CardCancel;
 import com.lkimilhol.paymentSystem.domain.CardPayment;
 import com.lkimilhol.paymentSystem.domain.CardSendData;
 import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
@@ -7,6 +9,7 @@ import com.lkimilhol.paymentSystem.global.common.AES256Utility;
 import com.lkimilhol.paymentSystem.global.common.CommonUtility;
 import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
+import com.lkimilhol.paymentSystem.responseApi.CardCancelResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardGetResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardPaymentResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,48 +31,68 @@ public class CardService {
     @Autowired
     CardSendDataService cardSendDataService;
 
+    @Autowired
+    CardAdminService cardAdminService;
+
     public CardService() {
         commonUtility = new CommonUtility();
         aes256Utility = new AES256Utility();
     }
 
     public CardPaymentResponse pay(CardPayment cardPayment) {
-        cardPaymentService.save(cardPayment);
-        long cardPaymentId = cardPayment.getUniqueId();
+        // seq 발급 받음
+        CardAdmin cardAdmin = new CardAdmin();
+        cardAdmin.setPaymentStatus(true);
+        cardAdminService.save(cardAdmin);
 
+        // 발급 받은 seq로 uniqueId 생성
+        long seq = cardAdmin.getSeq();
+        String uniqueId = commonUtility.generateUniqueId(seq);
+
+        // 카드사에 전송할 data 생성
         String encryptedCardInfo = aes256Utility.encryptCardInfo(cardPayment);
         String data = makeData(cardPayment, encryptedCardInfo);
         int cardDataLen = data.length();
-        String header = makeHeader(cardDataLen, CardPaymentInfo.CARD_PAYMENT, cardPaymentId);
+        String header = makeHeader(cardDataLen, CardPaymentInfo.CARD_PAYMENT, seq);
         String totalData = header + data;
 
+        // data 유효성 검사
+        if (header.length() != CardPaymentInfo.HEADER_SIZE) {
+            throw new CustomException(ErrorCode.INVALID_HEADER_DATA_LEN);
+        }
         if (totalData.length() != CardPaymentInfo.TOTAL_CARD_DATA_LEN) {
             throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
         }
 
-        String uniqueId = commonUtility.generateUniqueId(cardPaymentId);
-        CardSendData cardSendData = cardSendDataService.save(uniqueId, totalData);
+        cardAdmin.setUniqueId(uniqueId);
+        cardAdmin.setCardData(totalData);
+        cardPayment.setUniqueId(uniqueId);
+        cardSendDataService.save(totalData);
 
         CardPaymentResponse response = new CardPaymentResponse();
-        response.setCardData(cardSendData.getCardData());
-        response.setUniqueId(cardSendData.getUniqueId());
+        response.setCardData(totalData);
+        response.setUniqueId(uniqueId);
 
         return response;
     }
 
     public CardGetResponse get(String uniqueId) {
-        Optional<CardSendData> cardSendData = cardSendDataService.findByUniqueId(uniqueId);
-        cardSendData.orElseThrow(() -> {
+        Optional<CardAdmin> cardAdmin = cardAdminService.findByUniqueId(uniqueId);
+        cardAdmin.orElseThrow(() -> {
             throw new CustomException(ErrorCode.NOT_FOUND_UNIQUE_ID);
         });
 
-        return extractPayment(cardSendData.get().getUniqueId(), cardSendData.get().getCardData());
+        return extractPayment(uniqueId, cardAdmin.get().getCardData());
     }
 
-    private String makeHeader(int dataLen, String separate, long uniqueId) {
+    public CardCancelResponse cancel(CardCancel cardCancel) {
+        return null;
+    }
+
+    private String makeHeader(int dataLen, String separate, long seq) {
         String dataLenString = commonUtility.appendNumericSpace(dataLen, CardPaymentInfo.COMMON_CARD_DATA_LEN);
         String dataSeparate = commonUtility.appendStringSpace(separate, CardPaymentInfo.COMMON_DATA_SEPARATION_LEN);
-        String dataUniqueId = commonUtility.appendStringSpace(Long.toString(uniqueId), CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN);
+        String dataUniqueId = commonUtility.appendStringSpace(Long.toString(seq), CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN);
 
         return dataLenString
                 + dataSeparate
