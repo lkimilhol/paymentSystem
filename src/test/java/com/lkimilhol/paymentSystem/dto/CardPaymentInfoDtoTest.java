@@ -17,7 +17,7 @@ public class CardPaymentInfoDtoTest {
     void cardKeyCheck() {
         // given
         String test = "{\"cardNumber\":\"1234567890\", \"expiryDate\": \"0123\"," +
-                "\"csv\":\"098\", \"installment\": 0," +
+                "\"cvc\":\"098\", \"installment\": 0," +
                 "\"amount\":10000, \"vat\": 0}";
 
         // when
@@ -27,7 +27,7 @@ public class CardPaymentInfoDtoTest {
         // then
         assertEquals(cardPayment.getCardNumber(), "1234567890");
         assertEquals(cardPayment.getExpiryDate(), "0123");
-        assertEquals(cardPayment.getCsv(), "098");
+        assertEquals(cardPayment.getCvc(), "098");
         assertEquals(cardPayment.getInstallment(), 0);
         assertEquals(cardPayment.getAmount(), 10000);
         assertEquals(cardPayment.getVat(), 0);
@@ -39,7 +39,7 @@ public class CardPaymentInfoDtoTest {
     void cardRequiredKeyError() {
         // given
         String test = "{\"cardNumber\":\"1234567890\", \"expiryDate\": \"0123\"," +
-                "\"csv\":\"098\", \"installment\": 0," +
+                "\"cvc\":\"098\", \"installment\": 0," +
                 "vat\": 0}";
 
         // when
@@ -57,7 +57,7 @@ public class CardPaymentInfoDtoTest {
     void cardPaymentValueError() {
         // given
         String test = "{\"cardNumber\":\"1234567890AAAA\", \"expiryDate\": \"0123\"," +
-                "\"csv\":\"098\", \"installment\": 0," +
+                "\"cvc\":\"098\", \"installment\": 0," +
                 "\"amount\":10000, \"vat\": 0}";
 
         // when

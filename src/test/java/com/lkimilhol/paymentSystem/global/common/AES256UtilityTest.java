@@ -18,10 +18,10 @@ public class AES256UtilityTest {
         CardPayment cardPayment = new CardPayment();
         long cardNumber = 1234567890;
         int installment = 0;
-        int csv = 938;
+        int cvc = 938;
         cardPayment.setCardNumber(cardNumber);
         cardPayment.setInstallment(installment);
-        cardPayment.setCsv(csv);
+        cardPayment.setCvc(cvc);
 
         //when
         String encryptCardInfo = util.encryptCardInfo(cardPayment);
@@ -32,6 +32,6 @@ public class AES256UtilityTest {
         assertAll("result",
                 () -> assertEquals(cardNumber, result[0]),
                 () -> assertEquals(installment, Integer.parseInt(result[1])),
-                () -> assertEquals(csv, result[2]));
+                () -> assertEquals(cvc, result[2]));
     }
 }

@@ -53,7 +53,7 @@ public class AES256Utility implements AutoCloseable {
             sb.append(CardPaymentInfo.CARD_INFORMATION_DELIMITER);
             sb.append(cardPayment.getInstallment());
             sb.append(CardPaymentInfo.CARD_INFORMATION_DELIMITER);
-            sb.append(cardPayment.getCsv());
+            sb.append(cardPayment.getCvc());
             result = utility.encrypt(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();

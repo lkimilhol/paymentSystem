@@ -7,60 +7,48 @@ import com.lkimilhol.paymentSystem.global.common.AES256Utility;
 import com.lkimilhol.paymentSystem.global.common.CommonUtility;
 import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
-import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
-import com.lkimilhol.paymentSystem.repository.CardSendDataRepository;
+import com.lkimilhol.paymentSystem.responseApi.CardGetResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardPaymentResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class CardService {
 
-    private CardPaymentRepository cardPaymentRepository;
-    private CardSendDataRepository cardSendDataRepository;
-
     CommonUtility commonUtility;
     AES256Utility aes256Utility;
 
-    public CardService(CardPaymentRepository cp, CardSendDataRepository cs) {
-        this.cardPaymentRepository = cp;
-        this.cardSendDataRepository = cs;
+    @Autowired
+    CardPaymentService cardPaymentService;
+
+    @Autowired
+    CardSendDataService cardSendDataService;
+
+    public CardService() {
         commonUtility = new CommonUtility();
         aes256Utility = new AES256Utility();
     }
 
-
     public CardPaymentResponse pay(CardPayment cardPayment) {
-        cardPayment.setInsertTime(LocalDateTime.now());
-        cardPaymentRepository.save(cardPayment);
+        cardPaymentService.save(cardPayment);
         long cardPaymentId = cardPayment.getUniqueId();
 
         String encryptedCardInfo = aes256Utility.encryptCardInfo(cardPayment);
-
-        int vatAmount = calculateVat(cardPayment.getAmount(), cardPayment.getVat());
-        cardPayment.setVat(vatAmount);
-
-        String cardData = makeCardData(cardPayment, encryptedCardInfo);
-        int cardDataLen = cardData.length();
-        String commonData = makeCommonData(cardDataLen, CardPaymentInfo.CARD_PAYMENT, cardPaymentId);
-        String totalData = commonData + cardData;
+        String data = makeData(cardPayment, encryptedCardInfo);
+        int cardDataLen = data.length();
+        String header = makeHeader(cardDataLen, CardPaymentInfo.CARD_PAYMENT, cardPaymentId);
+        String totalData = header + data;
 
         if (totalData.length() != CardPaymentInfo.TOTAL_CARD_DATA_LEN) {
             throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
         }
 
         String uniqueId = commonUtility.generateUniqueId(cardPaymentId);
-
-        CardSendData cardSendData = new CardSendData();
-
-        cardSendData.setUniqueId(uniqueId);
-        cardSendData.setCardData(totalData);
-        cardSendData.setSendTime(LocalDateTime.now());
-
-        cardSendDataRepository.save(cardSendData);
+        CardSendData cardSendData = cardSendDataService.save(uniqueId, totalData);
 
         CardPaymentResponse response = new CardPaymentResponse();
         response.setCardData(cardSendData.getCardData());
@@ -69,12 +57,16 @@ public class CardService {
         return response;
     }
 
-    private int calculateVat(int amount, int vat) {
-        amount += vat == 0 ? Math.round((float) amount / 11) : vat;
-        return amount;
+    public CardGetResponse get(String uniqueId) {
+        Optional<CardSendData> cardSendData = cardSendDataService.findByUniqueId(uniqueId);
+        cardSendData.orElseThrow(() -> {
+            throw new CustomException(ErrorCode.NOT_FOUND_UNIQUE_ID);
+        });
+
+        return extractPayment(cardSendData.get().getUniqueId(), cardSendData.get().getCardData());
     }
 
-    private String makeCommonData(int dataLen, String separate, long uniqueId) {
+    private String makeHeader(int dataLen, String separate, long uniqueId) {
         String dataLenString = commonUtility.appendNumericSpace(dataLen, CardPaymentInfo.COMMON_CARD_DATA_LEN);
         String dataSeparate = commonUtility.appendStringSpace(separate, CardPaymentInfo.COMMON_DATA_SEPARATION_LEN);
         String dataUniqueId = commonUtility.appendStringSpace(Long.toString(uniqueId), CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN);
@@ -85,15 +77,15 @@ public class CardService {
     }
 
 
-    private String makeCardData(CardPayment cardPayment, String encryptedCardInfo) {
+    private String makeData(CardPayment cardPayment, String encryptedCardInfo) {
         String cardNumber = commonUtility.appendNumericNumberLeft(cardPayment.getCardNumber(),
                 CardPaymentInfo.CARD_NUMBER_LEN);
         String installment = commonUtility.appendNumericZero(cardPayment.getInstallment(),
                 CardPaymentInfo.CARD_INSTALLMENT_LEN);
-        String expiryDate = commonUtility.appendNumericNumberLeft(cardPayment.getExpiryDate(),
+        String expiryDate = commonUtility.zeroFill(cardPayment.getExpiryDate(),
                 CardPaymentInfo.CARD_EXPIRY_DATE_LEN);
-        String csv = commonUtility.appendNumericNumberLeft(cardPayment.getCsv(),
-                CardPaymentInfo.CARD_CSV_LEN);
+        String cvc = commonUtility.zeroFill(cardPayment.getCvc(),
+                CardPaymentInfo.CARD_CVC_LEN);
         String amount = commonUtility.appendNumericSpace(cardPayment.getAmount(),
                 CardPaymentInfo.CARD_AMOUNT_LEN);
         String vat = commonUtility.appendNumericZero(cardPayment.getVat(),
@@ -108,7 +100,7 @@ public class CardService {
         return cardNumber +
                 installment +
                 expiryDate +
-                csv +
+                cvc +
                 amount +
                 vat +
                 originalPayment +
@@ -116,13 +108,33 @@ public class CardService {
                 spareField;
     }
 
+    private CardGetResponse extractPayment(String uniqueId, String data) {
+        int start = CardPaymentInfo.CARD_DATA_START_IDX;
+        int end = start + CardPaymentInfo.CARD_AMOUNT_LEN;
+        String amount = data.substring(start, end).replaceAll(" ", "");
 
+        start = end;
+        end = start + CardPaymentInfo.CARD_VAT_LEN;
+        String vat = data.substring(start, end).replaceAll(" ", "");
 
-//    public Optional<CardPayment> findById(long id) {
-//        return cardRepository.findById(id);
-//    }
+        start = end + CardPaymentInfo.CARD_PAYMENT_ORIGINAL;
+        end = start + CardPaymentInfo.CARD_ENCRYPTED_DATA_LEN;
+        String encrypt = data.substring(start, end).replaceAll(" ", "");
 
-//    public List<CardPayment> findCardList() {
-//        return cardRepository.findAll();
-//    }
+        String[] result = aes256Utility.decryptCardInfo(encrypt).split(CardPaymentInfo.CARD_INFORMATION_DELIMITER);
+
+        String cardNumber = result[0];
+        String expiryDate = result[1];
+        String cvc = result[2];
+
+        CardGetResponse cardGetResponse = new CardGetResponse();
+        cardGetResponse.setUniqueId(uniqueId);
+        cardGetResponse.setCardNum(commonUtility.setMask(cardNumber));
+        cardGetResponse.setExpiryDate(expiryDate);
+        cardGetResponse.setCvc(cvc);
+        cardGetResponse.setAmount(Integer.parseInt(amount));
+        cardGetResponse.setVat(Integer.parseInt(vat));
+
+        return cardGetResponse;
+    }
 }
