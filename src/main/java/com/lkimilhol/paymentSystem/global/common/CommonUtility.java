@@ -1,22 +1,27 @@
 package com.lkimilhol.paymentSystem.global.common;
 
+import com.lkimilhol.paymentSystem.domain.CardPayment;
+import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
+
+import java.time.LocalDateTime;
+
 public class CommonUtility {
-    public String AppendStringSpace(String s, int numberOfSpace) {
+    public String appendStringSpace(String s, int numberOfSpace) {
         numberOfSpace = numberOfSpace - s.length();
         return String.format(s + "%" + numberOfSpace +"s", " ");
     }
 
-    public String AppendNumericSpace(int i, int numberOfSpace) {
+    public String appendNumericSpace(int i, int numberOfSpace) {
         String s = Integer.toString(i);
         numberOfSpace = numberOfSpace - s.length();
         return String.format("%" + numberOfSpace +"s" + s, " ");
     }
 
-    public String AppendNumericZero(int i, int numberOfSpace) {
+    public String appendNumericZero(int i, int numberOfSpace) {
         return String.format("%0" + numberOfSpace + "d", i);
     }
 
-    public String AppendNumericNumberLeft(int i, int numberOfSpace) {
+    public String appendNumericNumberLeft(int i, int numberOfSpace) {
         String s = Integer.toString(i);
         if (s.length() < numberOfSpace) {
             s = "0" + s;
@@ -26,9 +31,20 @@ public class CommonUtility {
         return String.format(s + "%" + numberOfSpace +"s", " ");
     }
 
-    public String AppendNumericNumberLeft(Long l, int numberOfSpace) {
+    public String appendNumericNumberLeft(Long l, int numberOfSpace) {
         String s = Long.toString(l);
         numberOfSpace = numberOfSpace - s.length();
         return String.format(s + "%" + numberOfSpace +"s", " ");
+    }
+
+    public String appendNumericZero(Long l, int numberOfSpace) {
+        return String.format("%0" + numberOfSpace + "d", l);
+    }
+
+    public String generateUniqueId(Long l) {
+        long time = System.nanoTime();
+        String id = appendNumericZero(l, CardPaymentInfo.GENERATE_UNIQUE_ID_ZERO_CNT);
+        String timeString = Long.toString(time).substring(0, 10);
+        return timeString + id;
     }
 }
