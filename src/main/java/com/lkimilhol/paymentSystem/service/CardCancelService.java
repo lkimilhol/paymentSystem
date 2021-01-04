@@ -1,9 +1,7 @@
 package com.lkimilhol.paymentSystem.service;
 
 import com.lkimilhol.paymentSystem.domain.CardCancel;
-import com.lkimilhol.paymentSystem.domain.CardPayment;
 import com.lkimilhol.paymentSystem.repository.CardCancelRepository;
-import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

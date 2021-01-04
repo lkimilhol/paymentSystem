@@ -25,6 +25,4 @@ public class CardPaymentService {
     public Optional<CardPayment> findByUniqueId(String uniqueId) {
         return cardPaymentRepository.findByUniqueId(uniqueId);
     }
-
-
 }

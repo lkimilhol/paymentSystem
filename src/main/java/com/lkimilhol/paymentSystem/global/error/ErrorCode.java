@@ -1,29 +1,35 @@
 package com.lkimilhol.paymentSystem.global.error;
 
+import org.springframework.http.HttpStatus;
+
 public enum ErrorCode {
     // Common
-    NOT_EXISTS_REQUIRED_KEY(400, "-99", "Required key not found in request"),
-    INVALID_VALUE(400, "-98", "Request's Value is Invalid"),
+    NOT_EXISTS_REQUIRED_KEY(HttpStatus.BAD_REQUEST, "-99", "Required key not found in request"),
+    INVALID_VALUE(HttpStatus.BAD_REQUEST, "-98", "Request's Value is Invalid"),
 
     // Payment
-    INVALID_HEADER_DATA_LEN(400, "P001", "common header length is invalid"),
-    INVALID_CARD_DATA_LEN(400, "P002", "Card data length is invalid"),
-    NOT_FOUND_PAYMENT_DATA(400, "P003", "not found payment data"),
-    ALREADY_CANCEL(400, "P004", "already cancel"),
-    NOT_EQUAL_TOTAL_AMOUNT(400, "P005", "not equal amount"),
+    INVALID_HEADER_DATA_LEN(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "common header length is invalid"),
+    INVALID_CARD_DATA_LEN(HttpStatus.INTERNAL_SERVER_ERROR, "P002", "Card data length is invalid"),
+    NOT_FOUND_PAYMENT_DATA(HttpStatus.INTERNAL_SERVER_ERROR, "P003", "not found payment data"),
+    ALREADY_CANCEL(HttpStatus.BAD_REQUEST, "P004", "already cancel"),
+    NOT_EQUAL_TOTAL_AMOUNT(HttpStatus.BAD_REQUEST, "P005", "not equal amount"),
 
     // SendData
-    NOT_FOUND_UNIQUE_ID(400, "C001", "not found unique id"),
+    NOT_FOUND_UNIQUE_ID(HttpStatus.BAD_REQUEST, "C001", "not found unique id"),
 
     // Admin
-    NOT_FOUND_DATA_BY_UNIQUE_ID(400, "A001", "not found card admin data"),
+    NOT_FOUND_DATA_BY_UNIQUE_ID(HttpStatus.BAD_REQUEST, "A001", "not found card admin data"),
+
+    // common
+    SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "-1", "not found error"),
     ;
+
 
     private final String code;
     private final String message;
-    private int status;
+    private final HttpStatus status;
 
-    ErrorCode(final int status, final String code, final String message) {
+    ErrorCode(final HttpStatus status, final String code, final String message) {
         this.status = status;
         this.message = message;
         this.code = code;
@@ -37,7 +43,7 @@ public enum ErrorCode {
         return code;
     }
 
-    public int getStatus() {
+    public HttpStatus getStatus() {
         return status;
     }
 }
