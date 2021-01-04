@@ -27,4 +27,6 @@ public class CardAdminRepository {
 
         return result.stream().findAny();
     }
+
+
 }

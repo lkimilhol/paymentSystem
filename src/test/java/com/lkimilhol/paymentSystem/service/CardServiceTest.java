@@ -24,9 +24,10 @@ public class CardServiceTest {
     public void pay() {
         //given
         CardPayment cardPayment = new CardPayment();
-        cardPayment.setCardNumber(1234567890);
+        cardPayment.setCardNumber("1234567890");
         cardPayment.setInstallment(0);
-        cardPayment.setCvc(981);
+        cardPayment.setCvc("981");
+        cardPayment.setExpiryDate("1112");
         cardPayment.setAmount(10000);
         cardPayment.setVat(0);
         cardPayment.setInsertTime(LocalDateTime.now());
@@ -35,6 +36,6 @@ public class CardServiceTest {
         cardService.pay(cardPayment);
 
         //then
-        Assertions.assertTrue(cardPayment.getUniqueId() > 0);
+        Assertions.assertTrue(cardPayment.getSeq() > 0);
     }
 }

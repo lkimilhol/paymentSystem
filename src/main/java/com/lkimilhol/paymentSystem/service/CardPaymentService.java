@@ -5,6 +5,7 @@ import com.lkimilhol.paymentSystem.repository.CardPaymentRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class CardPaymentService {
@@ -15,14 +16,15 @@ public class CardPaymentService {
     }
 
     public CardPayment save(CardPayment cardPayment) {
-        cardPayment.setVat(calculateVat(cardPayment.getAmount(), cardPayment.getVat()));
         cardPayment.setInsertTime(LocalDateTime.now());
         cardPayment.setPaymentStatus(true);
         cardPaymentRepository.save(cardPayment);
         return cardPayment;
     }
 
-    private int calculateVat(int amount, int vat) {
-        return vat == 0 ? Math.round((float) amount / 11) : vat;
+    public Optional<CardPayment> findByUniqueId(String uniqueId) {
+        return cardPaymentRepository.findByUniqueId(uniqueId);
     }
+
+
 }

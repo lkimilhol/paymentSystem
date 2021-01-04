@@ -10,7 +10,7 @@ import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 
 
 public class CardCancelDto implements DataTransferObjectService {
-    private String[] requireKey = {"uniqueId, amount"};
+    private String[] requireKey = {"uniqueId", "amount"};
 
     @Override
     public void checkKey(JsonObject obj) {

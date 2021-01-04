@@ -96,4 +96,9 @@ public class UtilityTest {
         //then
         Assertions.assertEquals("123456*******456", s);
     }
+
+    @Test
+    @DisplayName("카드 데이터 생성")
+    public void makeCardData() {
+    }
 }

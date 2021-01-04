@@ -3,15 +3,11 @@ package com.lkimilhol.paymentSystem.global.common;
 import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
 
 public class CommonUtility {
-    public String zeroFill(int i, int numberOfSpace) {
-        String s = Integer.toString(i);
-        numberOfSpace = numberOfSpace - s.length();
-        if (numberOfSpace == 0) {return s;}
-        return String.format(s + "%" + numberOfSpace +"s", "0");
-    }
-
     public String appendStringSpace(String s, int numberOfSpace) {
         numberOfSpace = numberOfSpace - s.length();
+        if(numberOfSpace == 0) {
+            return s;
+        }
         return String.format(s + "%" + numberOfSpace +"s", " ");
     }
 
@@ -47,6 +43,11 @@ public class CommonUtility {
         String id = appendNumericZero(l, CardPaymentInfo.GENERATE_UNIQUE_ID_ZERO_CNT);
         String timeString = Long.toString(time).substring(0, 10);
         return timeString + id;
+    }
+
+    public long extractSeq(String uniqueId) {
+        String s = uniqueId.substring(CardPaymentInfo.GENERATE_UNIQUE_ID_ZERO_CNT);
+        return Long.parseLong(s);
     }
 
     public String setMask(String cardNum) {

@@ -45,15 +45,15 @@ public class AES256Utility implements AutoCloseable {
         this.keySpec = keySpec;
     }
 
-    public String encryptCardInfo(CardPayment cardPayment) {
+    public String encryptCardInfo(String cardNumber, String expiryDate, String cvc) {
         String result = null;
         try (AES256Utility utility = new AES256Utility()){
             StringBuilder sb = new StringBuilder();
-            sb.append(cardPayment.getCardNumber());
+            sb.append(cardNumber);
             sb.append(CardPaymentInfo.CARD_INFORMATION_DELIMITER);
-            sb.append(cardPayment.getInstallment());
+            sb.append(expiryDate);
             sb.append(CardPaymentInfo.CARD_INFORMATION_DELIMITER);
-            sb.append(cardPayment.getCvc());
+            sb.append(cvc);
             result = utility.encrypt(sb.toString());
         } catch (Exception e) {
             e.printStackTrace();

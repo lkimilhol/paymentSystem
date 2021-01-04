@@ -19,9 +19,10 @@ public class ExceptionController {
         return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
     }
 
+    /*
     @ExceptionHandler(value = Exception.class)
     public String handleException(Exception e){
-        System.out.println(e.getMessage());
+        System.out.println(e.getStackTrace());
         return e.getMessage();
-    }
+    }*/
 }
