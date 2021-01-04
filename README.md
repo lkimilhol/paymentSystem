@@ -43,7 +43,7 @@ gradlew build (맥, 리눅스)
 gradlew.bat build(윈도우)
 ```
 위의 명령어를 활용하여 테스트케이스를 모두 통과하도록 합니다.
-이 후 프로젝트 내의 build/libs/폴더 안의 paymentSystem-0.0.1-SNAPSHOT.jar 파일을 jar 옵션을 통해 실행합니다.
+이 후 폴더 내의 build/libs/폴더 안의 paymentSystem-0.0.1-SNAPSHOT.jar 파일을 jar 옵션을 통해 실행합니다.
 
 ```
 java -jar paymentSystem-0.0.1-SNAPSHOT.jar
