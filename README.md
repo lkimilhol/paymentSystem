@@ -47,3 +47,74 @@ gradlew build
 ```
 java -jar paymentSystem-0.0.1-SNAPSHOT.jar
 ```
+
+* 기본 포트는 8080입니다. application.yml 파일을 사용하여 변경 가능합니다.
+
+### 프로토콜 정의서(긴 메시지는 짧게 하였습니다)
+* 카드 결제
+```
+{
+"cardNumber": 123456789011,
+"expiryDate": 0123,
+"cvc": 481,
+"installment": 0,
+"amount": 1000,
+"vat": 0
+}
+
+{
+"status": "OK",
+"uniqueId": "12891764590000000001",
+"cardData": " 446PAYMENT ..."
+}
+
+```
+* 결제 내역
+```
+{
+"uniqueId": "13891358310000000001"
+}
+
+{
+"status": "OK",
+"uniqueId": "13891358310000000001",
+"cardNum": "123456***011",
+"expiryDate": "0123",
+"cvc": "481",
+"isPayment": 0,
+"amount": 1000,
+"vat": 91
+}
+```
+*결제 취소
+```
+
+{
+"uniqueId": "13891358310000000001",
+"amount" : 1091,
+"vat": 0
+}
+
+{
+"status": "OK",
+"uniqueId": "13899044760000000005",
+"cancelData": " 446CANCEL..."
+}
+```
+
+*결제 취소(에러)
+```
+{
+"uniqueId": "13891358310000000001",
+"amount" : 1091,
+"vat": 999
+}
+
+
+{
+"errorCode": "NOT_EQUAL_TOTAL_AMOUNT",
+"errorNumber": "P005",
+"message": "not equal amount"
+}
+```
+
