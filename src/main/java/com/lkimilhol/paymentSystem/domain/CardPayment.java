@@ -23,13 +23,13 @@ public class CardPayment {
     @Column(name = "UNIQUE_ID", nullable = false, length = CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN, unique = true)
     String uniqueId;
 
-    @Column(name = "CARD_NUMBER")
+    @Column(name = "CARD_NUMBER", nullable = false, length = CardPaymentInfo.CARD_NUMBER_LEN)
     private String cardNumber;
 
-    @Column(name = "EXPIRY_DATE")
+    @Column(name = "EXPIRY_DATE", nullable = false, length = CardPaymentInfo.CARD_EXPIRY_DATE_LEN)
     private String expiryDate;
 
-    @Column(name = "CVC")
+    @Column(name = "CVC", nullable = false, length = CardPaymentInfo.CARD_CVC_LEN)
     private String cvc;
 
     @Column(name = "INSTALLMENT")

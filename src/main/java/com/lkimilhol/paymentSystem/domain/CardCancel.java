@@ -24,10 +24,15 @@ public class CardCancel {
     @Column(name = "AMOUNT")
     int amount;
 
+    @Column(name = "VAT")
+    int vat;
+
     @ManyToOne
     @JoinColumn(name = "PAYMENT_SEQ")
     private CardPayment cardPayment;
 
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
+
+    private boolean isPartCancel;
 }
