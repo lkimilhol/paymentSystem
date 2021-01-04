@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.lkimilhol.paymentSystem.domain.CardCancel;
+import com.lkimilhol.paymentSystem.domain.CardPayment;
 import com.lkimilhol.paymentSystem.domain.CardSendData;
 import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
@@ -27,6 +28,12 @@ public class CardCancelDto implements DataTransferObjectService {
         JsonObject obj = (JsonObject) p.parse(body);
         checkKey(obj);
 
-        return gson.fromJson(body, CardCancel.class);
+        //Json으로 받은 요청에 vat 필드가 없다면 -1로 셋팅하고 기본 자동계산
+        CardCancel cardCancel = gson.fromJson(body, CardCancel.class);
+        if (!obj.has("vat")) {
+            cardCancel.setVat(-1);
+        }
+
+        return cardCancel;
     }
 }

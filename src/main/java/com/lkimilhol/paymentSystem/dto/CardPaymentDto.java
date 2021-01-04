@@ -34,7 +34,12 @@ public class CardPaymentDto implements DataTransferObjectService {
         checkKey(obj);
         checkValue(obj);
 
-        return gson.fromJson(body, CardPayment.class);
+        //Json으로 받은 요청에 vat 필드가 없다면 -1로 셋팅하고 기본 자동계산
+        CardPayment cardPayment = gson.fromJson(body, CardPayment.class);
+        if (!obj.has("vat")) {
+            cardPayment.setVat(-1);
+        }
+        return cardPayment;
     }
 
     private void checkValue(JsonObject obj) {
@@ -46,6 +51,7 @@ public class CardPaymentDto implements DataTransferObjectService {
         if (obj.has("vat")) {
             checkIntegerValue(obj.get("vat").getAsInt(), 0, obj.get("amount").getAsInt());
         }
+
     }
 
     private void checkStringValue(String s, String reg) {

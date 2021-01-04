@@ -9,7 +9,6 @@ import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 import com.lkimilhol.paymentSystem.responseApi.CardCancelResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardGetResponse;
 import com.lkimilhol.paymentSystem.responseApi.CardPaymentResponse;
-import org.hibernate.dialect.identity.JDataStoreIdentityColumnSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -114,6 +113,7 @@ public class CardService {
         long adminSeq = cardCancelAdmin.getSeq();
         String newUniqueId = commonUtility.generateUniqueId(adminSeq);
         cardCancel.setUniqueId(newUniqueId);
+        cardCancel.setVat(calculateVat(cardCancel.getAmount(), cardCancel.getVat()));
         cardBreakdown.setUniqueId(newUniqueId);
 
         // 카드사에 전송할 data 생성
@@ -136,23 +136,54 @@ public class CardService {
         cardCancelAdmin.setCardData(totalData);
 
         // cardPayment 결제 취소 반영
-        Optional<CardPayment> cardPayment = cardPaymentService.findByUniqueId(uniqueId);
-        cardPayment.orElseThrow(() -> {
+        Optional<CardPayment> optionalCardPayment = cardPaymentService.findByUniqueId(uniqueId);
+        optionalCardPayment.orElseThrow(() -> {
             throw new CustomException(ErrorCode.NOT_FOUND_PAYMENT_DATA);
         });
 
         // 이미 결제를 취소했었다면
-        if (!cardPayment.get().isPaymentStatus()) {
+        if (!optionalCardPayment.get().isPaymentStatus()) {
             throw new CustomException(ErrorCode.ALREADY_CANCEL);
         }
 
-        cardPayment.get().setPaymentStatus(false);
-        int totalAmount = cardPayment.get().getAmount() + cardPayment.get().getVat();
-        cardCancel.setCardPayment(cardPayment.get());
+        CardPayment cardPayment = optionalCardPayment.get();
+        // 부분 취소의 경우
+        if (cardCancel.isPartCancel()) {
+            int payAmount = cardPayment.getAmount();
+            int payVat = cardPayment.getVat();
 
-        //취소 금액과 결제 금액(금액 + 부가세)가 다를 경우
-        if (cardCancel.getAmount() != totalAmount) {
-            throw new CustomException(ErrorCode.NOT_EQUAL_TOTAL_AMOUNT);
+            int cancelAmount = cardCancel.getAmount();
+            int cancelVat = cardCancel.getVat();
+
+            if (cancelAmount > payAmount) {
+                throw new CustomException(ErrorCode.NOT_ENOUGH_PAY_AMOUNT);
+            }
+            if (cancelVat > payVat) {
+                throw new CustomException(ErrorCode.INVALID_PAY_VAT);
+            }
+            if (cancelAmount == payAmount && cancelVat != payVat) {
+                throw new CustomException(ErrorCode.INVALID_PAY_VAT);
+            }
+
+            int amount = payAmount - cancelAmount;
+            int vat = payVat - cancelVat;
+
+            if (amount == 0 && vat == 0) {
+                cardPayment.setPaymentStatus(false);
+            }
+            cardPayment.setAmount(amount);
+            cardPayment.setVat(vat);
+        } else {
+            cardPayment.setPaymentStatus(false);
+            int paymentTotalAmount = cardPayment.getAmount() + cardPayment.getVat();
+            cardCancel.setCardPayment(optionalCardPayment.get());
+
+            int cancelTotalAmount = cardCancel.getAmount() + cardCancel.getVat();
+
+            //취소 금액과 결제 금액(금액 + 부가세)가 다를 경우
+            if (cancelTotalAmount != paymentTotalAmount) {
+                throw new CustomException(ErrorCode.NOT_EQUAL_TOTAL_AMOUNT);
+            }
         }
 
         cardBreakdown.setUniqueId(uniqueId);
@@ -274,6 +305,6 @@ public class CardService {
     }
 
     private int calculateVat(int amount, int vat) {
-        return vat == 0 ? Math.round((float) amount / 11) : vat;
+        return vat == -1 ? Math.round((float) amount / 11) : vat;
     }
 }

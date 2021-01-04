@@ -11,8 +11,12 @@ public enum ErrorCode {
     INVALID_HEADER_DATA_LEN(HttpStatus.INTERNAL_SERVER_ERROR, "P001", "common header length is invalid"),
     INVALID_CARD_DATA_LEN(HttpStatus.INTERNAL_SERVER_ERROR, "P002", "Card data length is invalid"),
     NOT_FOUND_PAYMENT_DATA(HttpStatus.INTERNAL_SERVER_ERROR, "P003", "not found payment data"),
+
+    // Cancel,
     ALREADY_CANCEL(HttpStatus.BAD_REQUEST, "P004", "already cancel"),
     NOT_EQUAL_TOTAL_AMOUNT(HttpStatus.BAD_REQUEST, "P005", "not equal amount"),
+    NOT_ENOUGH_PAY_AMOUNT(HttpStatus.BAD_REQUEST, "P005", "not enough vat"),
+    INVALID_PAY_VAT(HttpStatus.BAD_REQUEST, "P005", "not enough vat"),
 
     // SendData
     NOT_FOUND_UNIQUE_ID(HttpStatus.BAD_REQUEST, "C001", "not found unique id"),

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-public class CardPaymentInfoDtoTest {
+public class DataTransferObjectTest {
 
     @Test
     @DisplayName("정상 동작")
@@ -45,7 +45,7 @@ public class CardPaymentInfoDtoTest {
         // when
         CardPaymentDto dto = new CardPaymentDto();
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            CardPayment cardPayment = dto.transferBody(test);
+            dto.transferBody(test);
         });
 
         // then
@@ -63,7 +63,25 @@ public class CardPaymentInfoDtoTest {
         // when
         CardPaymentDto dto = new CardPaymentDto();
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            CardPayment cardPayment = dto.transferBody(test);
+            dto.transferBody(test);
+        });
+
+        // then
+        Assertions.assertEquals(ErrorCode.INVALID_VALUE, exception.getErrorCode());
+    }
+
+    @Test
+    @DisplayName("부가세가 높은 경우")
+    public void vatCheck() {
+        // given
+        String test = "{\"cardNumber\":\"1234567890\", \"expiryDate\": \"0123\"," +
+                "\"cvc\":\"098\", \"installment\": 0," +
+                "\"amount\":10000, \"vat\": 20000}";
+
+        // when
+        CardPaymentDto dto = new CardPaymentDto();
+        CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
+            dto.transferBody(test);
         });
 
         // then
