@@ -39,7 +39,8 @@ AMOUNT와 VAT가 0이 될 경우 취소가 완료 되었으므로 PAYMENT_STATUS
 ### 빌드 실행 방법
 
 ```
-gradlew build
+gradlew build (맥, 리눅스)
+gradlew.bat build(윈도우)
 ```
 위의 명령어를 활용하여 테스트케이스를 모두 통과하도록 합니다.
 이 후 프로젝트 내의 build/libs/폴더 안의 paymentSystem-0.0.1-SNAPSHOT.jar 파일을 jar 옵션을 통해 실행합니다.
