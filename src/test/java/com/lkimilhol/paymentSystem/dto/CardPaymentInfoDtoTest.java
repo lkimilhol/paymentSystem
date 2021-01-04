@@ -22,7 +22,7 @@ public class CardPaymentInfoDtoTest {
 
         // when
         CardPaymentDto dto = new CardPaymentDto();
-        CardPayment cardPayment = dto.transferCard(test);
+        CardPayment cardPayment = dto.transferBody(test);
 
         // then
         assertEquals(cardPayment.getCardNumber(), "1234567890");
@@ -45,7 +45,7 @@ public class CardPaymentInfoDtoTest {
         // when
         CardPaymentDto dto = new CardPaymentDto();
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            CardPayment cardPayment = dto.transferCard(test);
+            CardPayment cardPayment = dto.transferBody(test);
         });
 
         // then
@@ -63,7 +63,7 @@ public class CardPaymentInfoDtoTest {
         // when
         CardPaymentDto dto = new CardPaymentDto();
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            CardPayment cardPayment = dto.transferCard(test);
+            CardPayment cardPayment = dto.transferBody(test);
         });
 
         // then

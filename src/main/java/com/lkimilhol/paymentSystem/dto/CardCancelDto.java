@@ -3,13 +3,14 @@ package com.lkimilhol.paymentSystem.dto;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.lkimilhol.paymentSystem.domain.CardAdmin;
+import com.lkimilhol.paymentSystem.domain.CardCancel;
 import com.lkimilhol.paymentSystem.domain.CardSendData;
 import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 
-public class CardGetDto implements DataTransferObjectService {
-    private String[] requireKey = {"uniqueId"};
+
+public class CardCancelDto implements DataTransferObjectService {
+    private String[] requireKey = {"uniqueId", "amount"};
 
     @Override
     public void checkKey(JsonObject obj) {
@@ -20,12 +21,12 @@ public class CardGetDto implements DataTransferObjectService {
         }
     }
 
-    public CardAdmin transferBody(String body) {
+    public CardCancel transferBody(String body) {
         Gson gson = new Gson();
         JsonParser p = new JsonParser();
         JsonObject obj = (JsonObject) p.parse(body);
         checkKey(obj);
 
-        return gson.fromJson(body, CardAdmin.class);
+        return gson.fromJson(body, CardCancel.class);
     }
 }

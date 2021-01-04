@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static com.lkimilhol.paymentSystem.global.error.ErrorCode.SERVER_ERROR;
+
 @ControllerAdvice
 public class ExceptionController {
 
@@ -16,12 +18,18 @@ public class ExceptionController {
     ResponseEntity<ErrorResponse> error(CustomException e){
         final ErrorResponse res = new ErrorResponse();
         res.setErrorCode(e.getErrorCode());
-        return new ResponseEntity<>(res, HttpStatus.BAD_REQUEST);
+        res.setErrorNumber(e.getErrorCode().getCode());
+        res.setMessage(e.getErrorCode().getMessage());
+        return new ResponseEntity<>(res, res.getErrorCode().getStatus());
     }
 
     @ExceptionHandler(value = Exception.class)
-    public String handleException(Exception e){
-        System.out.println(e.getMessage());
-        return e.getMessage();
+    public @ResponseBody
+    ResponseEntity<ErrorResponse> error(Exception e) {
+        final ErrorResponse res = new ErrorResponse();
+        res.setErrorCode(SERVER_ERROR);
+        res.setErrorNumber(SERVER_ERROR.getCode());
+        res.setMessage(SERVER_ERROR.getMessage());
+        return new ResponseEntity<>(res, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

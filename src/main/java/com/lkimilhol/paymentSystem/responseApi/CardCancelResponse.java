@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class CardPaymentResponse {
+public class CardCancelResponse {
     HttpStatus status = HttpStatus.OK;
     String uniqueId;
-    String cardData;
+    String cancelData;
 }

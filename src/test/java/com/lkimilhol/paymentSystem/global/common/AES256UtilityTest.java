@@ -15,23 +15,19 @@ public class AES256UtilityTest {
     public void encryptAes(){
         //given
         AES256Utility util = new AES256Utility();
-        CardPayment cardPayment = new CardPayment();
-        long cardNumber = 1234567890;
-        int installment = 0;
-        int cvc = 938;
-        cardPayment.setCardNumber(cardNumber);
-        cardPayment.setInstallment(installment);
-        cardPayment.setCvc(cvc);
+        String cardNumber = "1234567890";
+        String expiryDate = "1123";
+        String cvc = "938";
 
         //when
-        String encryptCardInfo = util.encryptCardInfo(cardPayment);
+        String encryptCardInfo = util.encryptCardInfo(cardNumber, expiryDate, cvc);
         String original = util.decryptCardInfo(encryptCardInfo);
         String[] result = original.split(CardPaymentInfo.CARD_INFORMATION_DELIMITER);
 
         //then
         assertAll("result",
                 () -> assertEquals(cardNumber, result[0]),
-                () -> assertEquals(installment, Integer.parseInt(result[1])),
+                () -> assertEquals(expiryDate, result[1]),
                 () -> assertEquals(cvc, result[2]));
     }
 }
