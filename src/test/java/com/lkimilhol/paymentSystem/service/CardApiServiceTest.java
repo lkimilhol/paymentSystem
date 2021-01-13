@@ -2,7 +2,6 @@ package com.lkimilhol.paymentSystem.service;
 
 import com.lkimilhol.paymentSystem.domain.CardCancel;
 import com.lkimilhol.paymentSystem.domain.CardPayment;
-import com.lkimilhol.paymentSystem.dto.CardPaymentDto;
 import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 import com.lkimilhol.paymentSystem.responseApi.CardCancelResponse;
@@ -18,9 +17,9 @@ import java.time.LocalDateTime;
 
 @SpringBootTest
 @Rollback
-public class CardServiceTest {
+public class CardApiServiceTest {
     @Autowired
-    private CardService cardService;
+    private CardApiService cardApiService;
 
     @Test
     @DisplayName("카드 결제 API")
@@ -37,7 +36,7 @@ public class CardServiceTest {
         cardPayment.setInsertTime(LocalDateTime.now());
 
         //when
-        CardPaymentResponse cardPaymentResponse = cardService.pay(cardPayment);
+        CardPaymentResponse cardPaymentResponse = cardApiService.pay(cardPayment);
 
         //then
         Assertions.assertEquals(HttpStatus.OK, cardPaymentResponse.getStatus());
@@ -54,7 +53,7 @@ public class CardServiceTest {
         cardPayment.setExpiryDate("1112");
         cardPayment.setAmount(10000);
         cardPayment.setVat(5);
-        cardService.pay(cardPayment);
+        cardApiService.pay(cardPayment);
 
         CardCancel cardCancel = new CardCancel();
         cardCancel.setUniqueId(cardPayment.getUniqueId());
@@ -62,7 +61,7 @@ public class CardServiceTest {
         cardCancel.setVat(cardPayment.getVat());
 
         //when
-        CardCancelResponse cardCancelResponse = cardService.cancel(cardCancel);
+        CardCancelResponse cardCancelResponse = cardApiService.cancel(cardCancel);
 
         //then
         Assertions.assertEquals(HttpStatus.OK, cardCancelResponse.getStatus());
@@ -79,10 +78,10 @@ public class CardServiceTest {
         cardPayment.setExpiryDate("1112");
         cardPayment.setAmount(10000);
         cardPayment.setVat(5);
-        cardService.pay(cardPayment);
+        cardApiService.pay(cardPayment);
 
         //when
-        CardGetResponse cardGetResponse = cardService.get(cardPayment.getUniqueId());
+        CardGetResponse cardGetResponse = cardApiService.get(cardPayment.getUniqueId());
 
         //then
         Assertions.assertEquals(cardGetResponse.getUniqueId(), cardGetResponse.getUniqueId());
@@ -101,10 +100,10 @@ public class CardServiceTest {
         cardPayment.setExpiryDate("1112");
         cardPayment.setAmount(10000);
         cardPayment.setVat(-1);
-        cardService.pay(cardPayment);
+        cardApiService.pay(cardPayment);
 
         //when
-        cardService.get(cardPayment.getUniqueId());
+        cardApiService.get(cardPayment.getUniqueId());
 
         //then
         Assertions.assertEquals(10000 / 11, cardPayment.getVat());
@@ -121,8 +120,8 @@ public class CardServiceTest {
         cardPayment.setExpiryDate("1112");
         cardPayment.setAmount(10000);
         cardPayment.setVat(0);
-        cardService.pay(cardPayment);
-        CardGetResponse cardGetResponse = cardService.get(cardPayment.getUniqueId());
+        cardApiService.pay(cardPayment);
+        CardGetResponse cardGetResponse = cardApiService.get(cardPayment.getUniqueId());
 
         CardCancel cardCancel = new CardCancel();
         cardCancel.setUniqueId(cardGetResponse.getUniqueId());
@@ -131,7 +130,7 @@ public class CardServiceTest {
 
         //when
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            cardService.cancel(cardCancel);
+            cardApiService.cancel(cardCancel);
         });
 
         //then
