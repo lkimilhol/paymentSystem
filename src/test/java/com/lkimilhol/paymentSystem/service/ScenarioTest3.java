@@ -18,7 +18,7 @@ import org.springframework.http.HttpStatus;
 @SpringBootTest
 public class ScenarioTest3 {
     @Autowired
-    private CardService cardService;
+    private CardApiService cardApiService;
 
     private static String uniqueId;
 
@@ -41,7 +41,7 @@ public class ScenarioTest3 {
         cardPayment.setInstallment(0);
 
         //when
-        CardPaymentResponse cardPaymentResponse = cardService.pay(cardPayment);
+        CardPaymentResponse cardPaymentResponse = cardApiService.pay(cardPayment);
 
         //then
         uniqueId = cardPaymentResponse.getUniqueId();
@@ -60,7 +60,7 @@ public class ScenarioTest3 {
         cardCancel.setPartCancel(true);
 
         //when
-        CardCancelResponse cardCancelResponse = cardService.cancel(cardCancel);
+        CardCancelResponse cardCancelResponse = cardApiService.cancel(cardCancel);
 
         //then
         Assertions.assertEquals(HttpStatus.OK, cardCancelResponse.getStatus());
@@ -79,7 +79,7 @@ public class ScenarioTest3 {
 
         //when
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            cardService.cancel(cardCancel);
+            cardApiService.cancel(cardCancel);
         });
 
         //then
@@ -99,7 +99,7 @@ public class ScenarioTest3 {
 
         //when
         CustomException exception = Assertions.assertThrows(CustomException.class, () -> {
-            cardService.cancel(cardCancel);
+            cardApiService.cancel(cardCancel);
         });
 
         //then
