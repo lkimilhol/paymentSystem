@@ -37,6 +37,7 @@ public class CardApiService {
     public CardApiService() {
     }
 
+    //TODO 작업 단위를 더 쪼갤 수 있도록 할 것!
     public CardPaymentResponse pay(CardPayment cardPayment) {
         // seq 발급 받음
         CardAdmin cardAdmin = new CardAdmin();
@@ -49,7 +50,7 @@ public class CardApiService {
         cardPayment.setUniqueId(uniqueId);
         cardPayment.setVat(cardDataService.calculateVat(cardPayment.getAmount(), cardPayment.getVat()));
 
-        // 카드사에 전송할 data 생성
+        //TODO 카드사에 전송할 data 생성
         String encryptedCardInfo = cardDataService.getAes256Utility().encryptCardInfo(cardPayment.getCardNumber(), cardPayment.getExpiryDate(), cardPayment.getCvc());
         String data = cardDataService.makeData(cardPayment, "", encryptedCardInfo);
         String header = cardDataService.makeHeader(CardPaymentInfo.CARD_PAYMENT, uniqueId);
@@ -114,13 +115,13 @@ public class CardApiService {
         cardCancel.setVat(cardDataService.calculateVat(cardCancel.getAmount(), cardCancel.getVat()));
         cardBreakdown.setUniqueId(newUniqueId);
 
-        // 카드사에 전송할 data 생성
+        //TODO 카드사에 전송할 data 생성
         String encryptedCardInfo = cardDataService.getAes256Utility().encryptCardInfo(cardBreakdown.getCardNumber(), cardBreakdown.getExpiryDate(), cardBreakdown.getCvc());
         String data = cardDataService.makeData(cardBreakdown, uniqueId, encryptedCardInfo);
         String header = cardDataService.makeHeader(CardPaymentInfo.CARD_CANCEL, newUniqueId);
         String totalData = header + data;
 
-        // data 유효성 검사
+        //TODO data 유효성 검사
         if (header.length() != CardPaymentInfo.HEADER_SIZE) {
             throw new CustomException(ErrorCode.INVALID_HEADER_DATA_LEN);
         }
