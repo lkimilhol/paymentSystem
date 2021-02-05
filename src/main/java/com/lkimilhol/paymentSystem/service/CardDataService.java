@@ -91,6 +91,7 @@ public class CardDataService {
                 spareField;
     }
 
+    //TODO 보기 편하게 수정할것
     protected CardBreakdown extractPayment(String uniqueId, String data) {
         int start = CardPaymentInfo.HEADER_SIZE + CardPaymentInfo.CARD_NUMBER_LEN;
         int end = CardPaymentInfo.HEADER_SIZE + CardPaymentInfo.CARD_NUMBER_LEN + CardPaymentInfo.CARD_INSTALLMENT_LEN;
@@ -114,16 +115,15 @@ public class CardDataService {
         String expiryDate = result[1];
         String cvc = result[2];
 
-        CardBreakdown cardBreakdown = new CardBreakdown();
-        cardBreakdown.setUniqueId(uniqueId);
-        cardBreakdown.setCardNumber(cardNumber);
-        cardBreakdown.setInstallment(Integer.parseInt(installment));
-        cardBreakdown.setCvc(cvc);
-        cardBreakdown.setExpiryDate(expiryDate);
-        cardBreakdown.setAmount(Integer.parseInt(amount));
-        cardBreakdown.setVat(Integer.parseInt(vat));
-
-        return cardBreakdown;
+        return CardBreakdown.builder()
+                .uniqueId(uniqueId)
+                .cardNumber(cardNumber)
+                .installment(Integer.parseInt(installment))
+                .cvc(cvc)
+                .expiryDate(expiryDate)
+                .amount(Integer.parseInt(amount))
+                .vat(Integer.parseInt(vat))
+                .build();
     }
 
     protected int calculateVat(int amount, int vat) {
