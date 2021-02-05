@@ -85,14 +85,15 @@ public class CardApiService {
             throw new CustomException(ErrorCode.NOT_FOUND_UNIQUE_ID);
         });
         CardBreakdown cardBreakdown = cardDataService.extractPayment(uniqueId, cardAdmin.get().getCardData());
-        CardGetResponse cardGetResponse = new CardGetResponse();
-        cardGetResponse.setUniqueId(uniqueId);
-        cardGetResponse.setCardNum(cardDataService.getCommonUtility().setMask(cardBreakdown.getCardNumber()));
-        cardGetResponse.setExpiryDate(cardBreakdown.getExpiryDate());
-        cardGetResponse.setCvc(cardBreakdown.getCvc());
-        cardGetResponse.setAmount(cardBreakdown.getAmount());
-        cardGetResponse.setVat(cardBreakdown.getVat());
-        return cardGetResponse;
+
+        return CardGetResponse.builder()
+                .uniqueId(uniqueId)
+                .cardNum(cardDataService.getCommonUtility().setMask(cardBreakdown.getCardNumber()))
+                .expiryDate(cardBreakdown.getExpiryDate())
+                .cvc(cardBreakdown.getCvc())
+                .amount(cardBreakdown.getAmount())
+                .vat(cardBreakdown.getVat())
+                .build();
     }
 
     public CardCancelResponse cancel(CardCancel cardCancel) {
