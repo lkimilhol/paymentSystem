@@ -42,35 +42,25 @@ public class CardApiService {
         // 발급 받은 seq로 uniqueId 생성
         CardAdmin cardAdmin = addCardAdmin();
 
-        String uniqueId = cardDataService.getCommonUtility().generateUniqueId(cardAdmin.getSeq());
-        cardPayment.setUniqueId(uniqueId);
-        cardPayment.setVat(cardDataService.calculateVat(cardPayment.getAmount(), cardPayment.getVat()));
+        // 새로운 unique id 생성
+        setCardPaymentUniqueId(cardAdmin, cardPayment);
 
-        //TODO 카드사에 전송할 data 생성
-        String encryptedCardInfo = cardDataService.getAes256Utility().encryptCardInfo(cardPayment.getCardNumber(), cardPayment.getExpiryDate(), cardPayment.getCvc());
-        String data = cardDataService.makeData(cardPayment, "", encryptedCardInfo);
-        String header = cardDataService.makeHeader(CardPaymentInfo.CARD_PAYMENT, uniqueId);
-        String totalData = header + data;
+        //카드사에 전송할 data 생성
+        String totalData = makeSendData(cardPayment);
 
         // data 유효성 검사
-        if (header.length() != CardPaymentInfo.HEADER_SIZE) {
-            throw new CustomException(ErrorCode.INVALID_HEADER_DATA_LEN);
-        }
-        if (totalData.length() != CardPaymentInfo.TOTAL_CARD_DATA_LEN) {
-            throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
-        }
+        checkTotalDataLength(totalData);
 
-        cardAdmin.setUniqueId(uniqueId);
+        //update cardAdmin
+        cardAdmin.setUniqueId(cardPayment.getUniqueId());
         cardAdmin.setCardData(totalData);
+
         cardPaymentService.save(cardPayment);
-
-        cardPayment.setUniqueId(uniqueId);
-
         cardSendDataService.save(totalData);
 
         CardPaymentResponse response = new CardPaymentResponse();
         response.setCardData(totalData);
-        response.setUniqueId(uniqueId);
+        response.setUniqueId(cardPayment.getUniqueId());
 
         return response;
     }
@@ -197,5 +187,33 @@ public class CardApiService {
         cardAdmin.setPaymentStatus(true);
         cardAdminService.save(cardAdmin);
         return cardAdmin;
+    }
+
+    private void setCardPaymentUniqueId(CardAdmin cardAdmin, CardPayment cardPayment) {
+        String uniqueId = cardDataService.getCommonUtility().generateUniqueId(cardAdmin.getSeq());
+        cardPayment.setUniqueId(uniqueId);
+        cardPayment.setVat(cardDataService.calculateVat(cardPayment.getAmount(), cardPayment.getVat()));
+    }
+
+    private String makeSendData(CardPayment cardPayment) {
+        String encryptedCardInfo = cardDataService.getAes256Utility().encryptCardInfo(cardPayment.getCardNumber(), cardPayment.getExpiryDate(), cardPayment.getCvc());
+        String data = cardDataService.makeData(cardPayment, "", encryptedCardInfo);
+        String header = cardDataService.makeHeader(CardPaymentInfo.CARD_PAYMENT, cardPayment.getUniqueId());
+
+        checkHeaderDataLength(header);
+
+        return header + data;
+    }
+
+    private void checkHeaderDataLength(String header) {
+        if (header.length() != CardPaymentInfo.HEADER_SIZE) {
+            throw new CustomException(ErrorCode.INVALID_HEADER_DATA_LEN);
+        }
+    }
+
+    private void checkTotalDataLength(String totalData) {
+        if (totalData.length() != CardPaymentInfo.TOTAL_CARD_DATA_LEN) {
+            throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
+        }
     }
 }
