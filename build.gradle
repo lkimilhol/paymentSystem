@@ -13,6 +13,7 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.junit.jupiter:junit-jupiter:5.4.2'
 	compileOnly 'org.projectlombok:lombok:1.18.16'
 	annotationProcessor 'org.projectlombok:lombok:1.18.16'
 	testCompileOnly 'org.projectlombok:lombok:1.18.16'

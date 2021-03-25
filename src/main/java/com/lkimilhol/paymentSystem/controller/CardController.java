@@ -28,6 +28,7 @@ public class CardController {
     @RequestMapping(value = "/card/pay", method = RequestMethod.POST, produces = "application/json; charset=utf8")
     @ResponseBody
     public ResponseEntity<CardPaymentResponse> pay(@RequestBody String body) {
+        //TODO dto 의미랑 맞지 않음 이거 수정해줘야 함
         CardPaymentDto dto = new CardPaymentDto();
         CardPaymentResponse cardPaymentResponse = cardApiService.pay(dto.transferBody(body));
         return ResponseEntity.ok(cardPaymentResponse);
