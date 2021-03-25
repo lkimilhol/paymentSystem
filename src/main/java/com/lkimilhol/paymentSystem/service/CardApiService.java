@@ -39,14 +39,10 @@ public class CardApiService {
 
     //TODO 작업 단위를 더 쪼갤 수 있도록 할 것!
     public CardPaymentResponse pay(CardPayment cardPayment) {
-        // seq 발급 받음
-        CardAdmin cardAdmin = new CardAdmin();
-        cardAdmin.setPaymentStatus(true);
-        cardAdminService.save(cardAdmin);
-
         // 발급 받은 seq로 uniqueId 생성
-        long seq = cardAdmin.getSeq();
-        String uniqueId = cardDataService.getCommonUtility().generateUniqueId(seq);
+        CardAdmin cardAdmin = addCardAdmin();
+
+        String uniqueId = cardDataService.getCommonUtility().generateUniqueId(cardAdmin.getSeq());
         cardPayment.setUniqueId(uniqueId);
         cardPayment.setVat(cardDataService.calculateVat(cardPayment.getAmount(), cardPayment.getVat()));
 
@@ -194,5 +190,12 @@ public class CardApiService {
         response.setCancelData(totalData);
         response.setUniqueId(newUniqueId);
         return response;
+    }
+
+    private CardAdmin addCardAdmin() {
+        CardAdmin cardAdmin = new CardAdmin();
+        cardAdmin.setPaymentStatus(true);
+        cardAdminService.save(cardAdmin);
+        return cardAdmin;
     }
 }
