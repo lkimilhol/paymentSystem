@@ -66,11 +66,8 @@ public class CardApiService {
     }
 
     public CardGetResponse get(String uniqueId) {
-        Optional<CardAdmin> cardAdmin = cardAdminService.findByUniqueId(uniqueId);
-        cardAdmin.orElseThrow(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_UNIQUE_ID);
-        });
-        CardBreakdown cardBreakdown = cardDataService.extractPayment(uniqueId, cardAdmin.get().getCardData());
+        CardAdmin cardAdmin = getCardAdmin(uniqueId);
+        CardBreakdown cardBreakdown = cardDataService.extractPayment(cardAdmin);
 
         return CardGetResponse.builder()
                 .uniqueId(uniqueId)
@@ -84,13 +81,11 @@ public class CardApiService {
 
     public CardCancelResponse cancel(CardCancel cardCancel) {
         //실제 정상적으로 발급된 uniqueId 인지 체크
-        Optional<CardAdmin> cardAdmin = cardAdminService.findByUniqueId(cardCancel.getUniqueId());
-        cardAdmin.orElseThrow(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_DATA_BY_UNIQUE_ID);
-        });
+        CardAdmin cardAdmin = getCardAdmin(cardCancel.getUniqueId());
 
-        String uniqueId = cardAdmin.get().getUniqueId();
-        CardBreakdown cardBreakdown = cardDataService.extractPayment(uniqueId, cardAdmin.get().getCardData());
+        //카드 정보 추출
+        CardBreakdown cardBreakdown = cardDataService.extractPayment(cardAdmin);
+        String uniqueId = cardAdmin.getUniqueId();
 
         // 발급 받은 seq로 uniqueId 생성
         CardAdmin cardCancelAdmin = new CardAdmin();
@@ -102,19 +97,11 @@ public class CardApiService {
         cardCancel.setVat(cardDataService.calculateVat(cardCancel.getAmount(), cardCancel.getVat()));
         cardBreakdown.setUniqueId(newUniqueId);
 
-        //TODO 카드사에 전송할 data 생성
-        String encryptedCardInfo = cardDataService.getAes256Utility().encryptCardInfo(cardBreakdown.getCardNumber(), cardBreakdown.getExpiryDate(), cardBreakdown.getCvc());
-        String data = cardDataService.makeData(cardBreakdown, uniqueId, encryptedCardInfo);
-        String header = cardDataService.makeHeader(CardPaymentInfo.CARD_CANCEL, newUniqueId);
-        String totalData = header + data;
+        //카드사에 전송할 data 생성
+        String totalData = makeSendData(cardBreakdown);
 
-        //TODO data 유효성 검사
-        if (header.length() != CardPaymentInfo.HEADER_SIZE) {
-            throw new CustomException(ErrorCode.INVALID_HEADER_DATA_LEN);
-        }
-        if (totalData.length() != CardPaymentInfo.TOTAL_CARD_DATA_LEN) {
-            throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
-        }
+        //data 유효성 검사
+        checkTotalDataLength(totalData);
 
         // 데이터 업데이트
         cardCancelAdmin.setPaymentStatus(false);
@@ -122,17 +109,11 @@ public class CardApiService {
         cardCancelAdmin.setCardData(totalData);
 
         // cardPayment 결제 취소 반영
-        Optional<CardPayment> optionalCardPayment = cardPaymentService.findByUniqueId(uniqueId);
-        optionalCardPayment.orElseThrow(() -> {
-            throw new CustomException(ErrorCode.NOT_FOUND_PAYMENT_DATA);
-        });
+        CardPayment cardPayment = getCardPayment(uniqueId);
 
         // 이미 결제를 취소했었다면
-        if (!optionalCardPayment.get().isPaymentStatus()) {
-            throw new CustomException(ErrorCode.ALREADY_CANCEL);
-        }
+       checkCardPaymentCancel(cardPayment);
 
-        CardPayment cardPayment = optionalCardPayment.get();
         // 부분 취소의 경우
         if (cardCancel.isPartCancel()) {
             int payAmount = cardPayment.getAmount();
@@ -162,7 +143,7 @@ public class CardApiService {
         } else {
             cardPayment.setPaymentStatus(false);
             int paymentTotalAmount = cardPayment.getAmount() + cardPayment.getVat();
-            cardCancel.setCardPayment(optionalCardPayment.get());
+            cardCancel.setCardPayment(cardPayment);
 
             int cancelTotalAmount = cardCancel.getAmount() + cardCancel.getVat();
 
@@ -205,6 +186,16 @@ public class CardApiService {
         return header + data;
     }
 
+    private String makeSendData(CardBreakdown cardBreakdown) {
+        String encryptedCardInfo = cardDataService.getAes256Utility().encryptCardInfo(cardBreakdown.getCardNumber(), cardBreakdown.getExpiryDate(), cardBreakdown.getCvc());
+        String data = cardDataService.makeData(cardBreakdown, "", encryptedCardInfo);
+        String header = cardDataService.makeHeader(CardPaymentInfo.CARD_PAYMENT, cardBreakdown.getUniqueId());
+
+        checkHeaderDataLength(header);
+
+        return header + data;
+    }
+
     private void checkHeaderDataLength(String header) {
         if (header.length() != CardPaymentInfo.HEADER_SIZE) {
             throw new CustomException(ErrorCode.INVALID_HEADER_DATA_LEN);
@@ -214,6 +205,30 @@ public class CardApiService {
     private void checkTotalDataLength(String totalData) {
         if (totalData.length() != CardPaymentInfo.TOTAL_CARD_DATA_LEN) {
             throw new CustomException(ErrorCode.INVALID_CARD_DATA_LEN);
+        }
+    }
+
+    private CardAdmin getCardAdmin(String uniqueId) {
+        Optional<CardAdmin> cardAdmin = cardAdminService.findByUniqueId(uniqueId);
+        cardAdmin.orElseThrow(() -> {
+            throw new CustomException(ErrorCode.NOT_FOUND_DATA_BY_UNIQUE_ID);
+        });
+
+        return cardAdmin.get();
+    }
+
+    private CardPayment getCardPayment(String uniqueId) {
+        Optional<CardPayment> optionalCardPayment = cardPaymentService.findByUniqueId(uniqueId);
+        optionalCardPayment.orElseThrow(() -> {
+            throw new CustomException(ErrorCode.NOT_FOUND_PAYMENT_DATA);
+        });
+
+        return optionalCardPayment.get();
+    }
+
+    private void checkCardPaymentCancel(CardPayment cardPayment) {
+        if (!cardPayment.isPaymentStatus()) {
+            throw new CustomException(ErrorCode.ALREADY_CANCEL);
         }
     }
 }
