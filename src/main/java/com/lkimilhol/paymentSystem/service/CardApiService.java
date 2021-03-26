@@ -37,6 +37,20 @@ public class CardApiService {
     public CardApiService() {
     }
 
+    public CardGetResponse get(String uniqueId) {
+        CardAdmin cardAdmin = getCardAdmin(uniqueId);
+        CardBreakdown cardBreakdown = cardDataService.extractPayment(cardAdmin);
+
+        return CardGetResponse.builder()
+                .uniqueId(uniqueId)
+                .cardNum(cardDataService.getCommonUtility().setMask(cardBreakdown.getCardNumber()))
+                .expiryDate(cardBreakdown.getExpiryDate())
+                .cvc(cardBreakdown.getCvc())
+                .amount(cardBreakdown.getAmount())
+                .vat(cardBreakdown.getVat())
+                .build();
+    }
+
     //TODO 작업 단위를 더 쪼갤 수 있도록 할 것!
     public CardPaymentResponse pay(CardPayment cardPayment) {
         // 발급 받은 seq로 uniqueId 생성
@@ -63,20 +77,6 @@ public class CardApiService {
         response.setUniqueId(cardPayment.getUniqueId());
 
         return response;
-    }
-
-    public CardGetResponse get(String uniqueId) {
-        CardAdmin cardAdmin = getCardAdmin(uniqueId);
-        CardBreakdown cardBreakdown = cardDataService.extractPayment(cardAdmin);
-
-        return CardGetResponse.builder()
-                .uniqueId(uniqueId)
-                .cardNum(cardDataService.getCommonUtility().setMask(cardBreakdown.getCardNumber()))
-                .expiryDate(cardBreakdown.getExpiryDate())
-                .cvc(cardBreakdown.getCvc())
-                .amount(cardBreakdown.getAmount())
-                .vat(cardBreakdown.getVat())
-                .build();
     }
 
     public CardCancelResponse cancel(CardCancel cardCancel) {
@@ -112,25 +112,17 @@ public class CardApiService {
         CardPayment cardPayment = getCardPayment(uniqueId);
 
         // 이미 결제를 취소했었다면
-       checkCardPaymentCancel(cardPayment);
+        checkCardPaymentCancel(cardPayment);
 
         // 부분 취소의 경우
         if (cardCancel.isPartCancel()) {
+            checkPartCancel(cardPayment, cardCancel);
+
             int payAmount = cardPayment.getAmount();
             int payVat = cardPayment.getVat();
 
             int cancelAmount = cardCancel.getAmount();
             int cancelVat = cardCancel.getVat();
-
-            if (cancelAmount > payAmount) {
-                throw new CustomException(ErrorCode.NOT_ENOUGH_PAY_AMOUNT);
-            }
-            if (cancelVat > payVat) {
-                throw new CustomException(ErrorCode.INVALID_PAY_VAT);
-            }
-            if (cancelAmount == payAmount && cancelVat != payVat) {
-                throw new CustomException(ErrorCode.INVALID_PAY_VAT);
-            }
 
             int amount = payAmount - cancelAmount;
             int vat = payVat - cancelVat;
@@ -229,6 +221,24 @@ public class CardApiService {
     private void checkCardPaymentCancel(CardPayment cardPayment) {
         if (!cardPayment.isPaymentStatus()) {
             throw new CustomException(ErrorCode.ALREADY_CANCEL);
+        }
+    }
+
+    private void checkPartCancel(CardPayment cardPayment, CardCancel cardCancel) {
+        int payAmount = cardPayment.getAmount();
+        int payVat = cardPayment.getVat();
+
+        int cancelAmount = cardCancel.getAmount();
+        int cancelVat = cardCancel.getVat();
+
+        if (cancelAmount > payAmount) {
+            throw new CustomException(ErrorCode.NOT_ENOUGH_PAY_AMOUNT);
+        }
+        if (cancelVat > payVat) {
+            throw new CustomException(ErrorCode.INVALID_PAY_VAT);
+        }
+        if (cancelAmount == payAmount && cancelVat != payVat) {
+            throw new CustomException(ErrorCode.INVALID_PAY_VAT);
         }
     }
 }
