@@ -1,5 +1,6 @@
 package com.lkimilhol.paymentSystem.service;
 
+import com.lkimilhol.paymentSystem.domain.CardAdmin;
 import com.lkimilhol.paymentSystem.domain.CardBreakdown;
 import com.lkimilhol.paymentSystem.domain.CardPayment;
 import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
@@ -92,7 +93,10 @@ public class CardDataService {
     }
 
     //TODO 보기 편하게 수정할것
-    protected CardBreakdown extractPayment(String uniqueId, String data) {
+    protected CardBreakdown extractPayment(CardAdmin cardAdmin) {
+        String uniqueId = cardAdmin.getUniqueId();
+        String data = cardAdmin.getCardData();
+
         int start = CardPaymentInfo.HEADER_SIZE + CardPaymentInfo.CARD_NUMBER_LEN;
         int end = CardPaymentInfo.HEADER_SIZE + CardPaymentInfo.CARD_NUMBER_LEN + CardPaymentInfo.CARD_INSTALLMENT_LEN;
         String installment = data.substring(start, end);
