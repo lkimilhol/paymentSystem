@@ -2,8 +2,6 @@ package com.lkimilhol.paymentSystem.service;
 
 import com.lkimilhol.paymentSystem.domain.*;
 import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
-import com.lkimilhol.paymentSystem.global.common.AES256Utility;
-import com.lkimilhol.paymentSystem.global.common.CommonUtility;
 import com.lkimilhol.paymentSystem.global.error.CustomException;
 import com.lkimilhol.paymentSystem.global.error.ErrorCode;
 import com.lkimilhol.paymentSystem.responseApi.CardCancelResponse;
@@ -128,12 +126,12 @@ public class CardApiService {
             int vat = payVat - cancelVat;
 
             if (amount == 0 && vat == 0) {
-                cardPayment.setPaymentStatus(false);
+                cardPayment.setPaymentComplete(false);
             }
             cardPayment.setAmount(amount);
             cardPayment.setVat(vat);
         } else {
-            cardPayment.setPaymentStatus(false);
+            cardPayment.setPaymentComplete(false);
             int paymentTotalAmount = cardPayment.getAmount() + cardPayment.getVat();
             cardCancel.setCardPayment(cardPayment);
 
@@ -219,7 +217,7 @@ public class CardApiService {
     }
 
     private void checkCardPaymentCancel(CardPayment cardPayment) {
-        if (!cardPayment.isPaymentStatus()) {
+        if (!cardPayment.isPaymentComplete()) {
             throw new CustomException(ErrorCode.ALREADY_CANCEL);
         }
     }

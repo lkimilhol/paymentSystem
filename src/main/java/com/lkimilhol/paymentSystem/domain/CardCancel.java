@@ -34,5 +34,9 @@ public class CardCancel {
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
 
-    private Boolean isPartCancel;
+    private Boolean partCancel = false;
+
+    public Boolean isPartCancel() {
+        return partCancel;
+    }
 }

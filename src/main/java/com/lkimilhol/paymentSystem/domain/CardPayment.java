@@ -42,11 +42,15 @@ public class CardPayment {
     private int vat;
 
     @Column(name = "PAYMENT_STATUS", columnDefinition = "tinyint(1) default 1")
-    private Boolean paymentStatus;
+    private Boolean paymentComplete = false;
 
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
 
     @OneToMany(mappedBy = "cardPayment")
     private List<CardCancel> cardCancels = new ArrayList<>();
+
+    public Boolean isPaymentComplete() {
+        return paymentComplete;
+    }
 }
