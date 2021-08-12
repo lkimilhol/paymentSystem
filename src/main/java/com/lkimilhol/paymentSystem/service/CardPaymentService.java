@@ -17,7 +17,7 @@ public class CardPaymentService {
 
     public CardPayment save(CardPayment cardPayment) {
         cardPayment.setInsertTime(LocalDateTime.now());
-        cardPayment.setPaymentStatus(true);
+        cardPayment.setPaymentComplete(true);
         cardPaymentRepository.save(cardPayment);
         return cardPayment;
     }

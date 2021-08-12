@@ -21,7 +21,7 @@ public class CardPayment {
     private long seq;
 
     @Column(name = "UNIQUE_ID", nullable = false, length = CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN, unique = true)
-    String uniqueId;
+    private String uniqueId;
 
     @Column(name = "CARD_NUMBER", nullable = false, length = CardPaymentInfo.CARD_NUMBER_LEN)
     private String cardNumber;
@@ -42,11 +42,15 @@ public class CardPayment {
     private int vat;
 
     @Column(name = "PAYMENT_STATUS", columnDefinition = "tinyint(1) default 1")
-    private boolean paymentStatus;
+    private Boolean paymentComplete = false;
 
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
 
     @OneToMany(mappedBy = "cardPayment")
     private List<CardCancel> cardCancels = new ArrayList<>();
+
+    public Boolean isPaymentComplete() {
+        return paymentComplete;
+    }
 }

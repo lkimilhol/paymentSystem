@@ -16,16 +16,16 @@ public class CardCancel {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "CANCEL_SEQ")
-    long seq;
+    private Long seq;
 
     @Column(name = "UNIQUE_ID", nullable = false, length = CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN, unique = true)
     String uniqueId;
 
     @Column(name = "AMOUNT")
-    int amount;
+    private int amount;
 
     @Column(name = "VAT")
-    int vat;
+    private int vat;
 
     @ManyToOne
     @JoinColumn(name = "PAYMENT_SEQ")
@@ -34,5 +34,9 @@ public class CardCancel {
     @Column(name = "INSERT_TIME", columnDefinition = "DATETIME")
     private LocalDateTime insertTime;
 
-    private boolean isPartCancel;
+    private Boolean partCancel = false;
+
+    public Boolean isPartCancel() {
+        return partCancel;
+    }
 }

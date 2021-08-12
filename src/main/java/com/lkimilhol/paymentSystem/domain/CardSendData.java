@@ -13,11 +13,11 @@ public class CardSendData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "SEQ")
-    long seq;
+    private Long seq;
 
     @Lob
     @Column(name = "CARD_DATA", nullable = false, length = CardPaymentInfo.TOTAL_CARD_DATA_LEN)
-    String cardData;
+    private String cardData;
 
     @Column(name = "SEND_TIME", columnDefinition = "DATETIME")
     private LocalDateTime sendTime;
