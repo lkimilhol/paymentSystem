@@ -3,18 +3,18 @@ package com.lkimilhol.paymentSystem.global.common;
 import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
 
 public class CommonUtility {
-    public String appendStringSpace(String s, int numberOfSpace) {
+    public static String appendStringSpace(String s, int numberOfSpace) {
         numberOfSpace = numberOfSpace - s.length();
-        if(numberOfSpace == 0) {
+        if (numberOfSpace == 0) {
             return s;
         }
-        return String.format(s + "%" + numberOfSpace +"s", " ");
+        return String.format(s + "%" + numberOfSpace + "s", " ");
     }
 
     public String appendNumericSpace(int i, int numberOfSpace) {
         String s = Integer.toString(i);
         numberOfSpace = numberOfSpace - s.length();
-        return String.format("%" + numberOfSpace +"s" + s, " ");
+        return String.format("%" + numberOfSpace + "s" + s, " ");
     }
 
     public String appendNumericZero(int i, int numberOfSpace) {
@@ -24,8 +24,10 @@ public class CommonUtility {
     public String appendNumericNumberLeft(int i, int numberOfSpace) {
         String s = Integer.toString(i);
         numberOfSpace = numberOfSpace - s.length();
-        if (numberOfSpace == 0) {return s;}
-        return String.format(s + "%" + numberOfSpace +"s", " ");
+        if (numberOfSpace == 0) {
+            return s;
+        }
+        return String.format(s + "%" + numberOfSpace + "s", " ");
     }
 
     public String appendNumericZero(Long l, int numberOfSpace) {
@@ -41,7 +43,7 @@ public class CommonUtility {
 
     public String setMask(String cardNum) {
         char[] ch = cardNum.toCharArray();
-        for(int i = CardPaymentInfo.CARD_MASKING_START_LEN; i < cardNum.length() - CardPaymentInfo.CARD_MASKING_END_LEN; i ++){
+        for (int i = CardPaymentInfo.CARD_MASKING_START_LEN; i < cardNum.length() - CardPaymentInfo.CARD_MASKING_END_LEN; i++) {
             ch[i] = '*';
         }
 
