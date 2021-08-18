@@ -1,20 +1,13 @@
 package com.lkimilhol.paymentSystem.global.common;
 
-import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class UtilityTest {
-    private static CommonUtility commonUtility;
+import com.lkimilhol.paymentSystem.global.CardPaymentInfo;
 
-    @BeforeAll
-    public static void setup() {
-        commonUtility = new CommonUtility();
-    }
-
+class CommonUtilityTest {
     @Test
     @DisplayName("공백 채우기- 문자")
     public void appendSpace() {
@@ -22,7 +15,7 @@ public class UtilityTest {
         String s = "1234567890";
 
         //when
-        String result = commonUtility.appendStringSpace(s, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = CommonUtility.fillSpace(s, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -36,7 +29,7 @@ public class UtilityTest {
         int i = 1234567890;
 
         //when
-        String result = commonUtility.appendNumericSpace(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = CommonUtility.fillSpace(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -50,7 +43,7 @@ public class UtilityTest {
         int i = 1234567890;
 
         //when
-        String result = commonUtility.appendNumericZero(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = CommonUtility.appendNumericZero(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -64,7 +57,7 @@ public class UtilityTest {
         int i = 1234567890;
 
         //when
-        String result = commonUtility.appendNumericNumberLeft(i, CardPaymentInfo.CARD_NUMBER_LEN);
+        String result = CommonUtility.appendNumericNumberLeft(i, CardPaymentInfo.CARD_NUMBER_LEN);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.CARD_NUMBER_LEN, result.length());
@@ -78,7 +71,7 @@ public class UtilityTest {
         long l = 2100000000l;
 
         //when
-        String s = commonUtility.generateUniqueId(l);
+        String s = CommonUtility.generateUniqueId(l);
 
         //then
         Assertions.assertEquals(CardPaymentInfo.COMMON_DATA_UNIQUE_ID_LEN, s.length());
@@ -91,7 +84,7 @@ public class UtilityTest {
         String cardNum = "1234567890123456";
 
         //when
-        String s = commonUtility.setMask(cardNum);
+        String s = CommonUtility.setMask(cardNum);
 
         //then
         Assertions.assertEquals("123456*******456", s);
